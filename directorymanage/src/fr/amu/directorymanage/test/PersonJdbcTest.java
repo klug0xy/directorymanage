@@ -18,6 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fr.amu.directorymanage.beans.Person;
+import fr.amu.directorymanage.beans.PersonMail;
 import fr.amu.directorymanage.dao.DAOException;
 import fr.amu.directorymanage.beans.Group;
 import fr.amu.directorymanage.interfaces.PersonDao;
@@ -29,6 +30,7 @@ import fr.amu.directorymanage.jdbc.JdbcTools;
 public class PersonJdbcTest {
 	
 	Person p = new Person();
+	PersonMail personMail = new PersonMail();
 	
 	@Autowired
     private PersonDao personDao;
@@ -102,7 +104,7 @@ public class PersonJdbcTest {
 	@Test
 	public void testSavePerson() throws ParseException, ClassNotFoundException {
 		
-		p.setId(55884);
+		p.setId(new Long(55884));
 		p.setFirstName("test");
 		p.setLastName("testii");
 		String strDate = "2011-12-31 00:00:00";
@@ -110,15 +112,16 @@ public class PersonJdbcTest {
         java.util.Date date = sdf.parse(strDate);
         java.sql.Date sqlDate = new Date(date.getTime());
 		p.setBirthday(sqlDate);
+		personMail.setMail("dej@mail.fr");
 		p.setMail("dej@mail.fr");
-		p.setGroupId(45855);
+		p.setGroupId(new Long(45855));
 		personDao.savePerson(p);
 	}
 	
 	@Test(expected=DAOException.class)
 	public void testSaveInvalidNamePerson() throws ParseException, ClassNotFoundException {
 		
-		p.setId(55884);
+		p.setId(new Long(55884));
 		p.setFirstName("");
 		p.setLastName("testii");
 		String strDate = "2011-12-31 00:00:00";
@@ -126,15 +129,16 @@ public class PersonJdbcTest {
         java.util.Date date = sdf.parse(strDate);
         java.sql.Date sqlDate = new Date(date.getTime());
 		p.setBirthday(sqlDate);
+		personMail.setMail("dej@mail.fr");
 		p.setMail("dej@mail.fr");
-		p.setGroupId(45855);
+		p.setGroupId(new Long(45855));
 		personDao.savePerson(p);
 	}
 	
 	@Test(expected=DAOException.class)
 	public void testSaveInvalidMailPerson() throws ParseException, ClassNotFoundException {
 		
-		p.setId(55884);
+		p.setId(new Long(55884));
 		p.setFirstName("Houssem");
 		p.setLastName("testii");
 		String strDate = "2011-12-31 00:00:00";
@@ -142,8 +146,9 @@ public class PersonJdbcTest {
         java.util.Date date = sdf.parse(strDate);
         java.sql.Date sqlDate = new Date(date.getTime());
 		p.setBirthday(sqlDate);
+		personMail.setMail("dejmail.fr");
 		p.setMail("dejmail.fr");
-		p.setGroupId(45855);
+		p.setGroupId(new Long(45855));
 		personDao.savePerson(p);
 	}
 

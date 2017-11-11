@@ -14,7 +14,8 @@ import org.springframework.stereotype.Service;
 
 import fr.amu.directorymanage.beans.Group;
 import fr.amu.directorymanage.beans.Person;
-import fr.amu.directorymanage.bus.PersonManager;
+import fr.amu.directorymanage.beans.PersonMail;
+import fr.amu.directorymanage.business.PersonManager;
 import fr.amu.directorymanage.interfaces.PersonDao;
 import fr.amu.directorymanage.jdbc.JdbcTools;
 
@@ -90,6 +91,7 @@ public class PersonJdbc implements PersonDao {
 				+ "birthday,mail,groupId FROM Person WHERE groupId = ?;";
 
 		Person person = new Person();
+		PersonMail personMail = new PersonMail();
 		Collection<Person> clp = new ArrayList<Person>();
 
 		try {
@@ -111,7 +113,8 @@ public class PersonJdbc implements PersonDao {
 				person.setFirstName(firstName);
 				person.setLastName(lastName);
 				person.setBirthday(birthday);
-				person.setMail(mail);
+				personMail.setMail(mail);
+				person.setPersonMail(personMail);
 				person.setGroupId(grId);
 				clp.add(person);
 
@@ -129,6 +132,7 @@ public class PersonJdbc implements PersonDao {
 		final String SQL_SELECT_PERSON = "SELECT id,firstName,lastName,birthday"
 				+ ",mail,groupId FROM Person WHERE id = ?";
 		Person person = new Person();
+		PersonMail personMail = new PersonMail();
 
 		try {
 			jdbc.init();
@@ -149,7 +153,8 @@ public class PersonJdbc implements PersonDao {
 				person.setFirstName(firstName);
 				person.setLastName(lastName);
 				person.setBirthday(birthday);
-				person.setMail(mail);
+				personMail.setMail(mail);
+				person.setPersonMail(personMail);
 				person.setGroupId(groupId);
 
 				// resultSet.close();
@@ -172,7 +177,7 @@ public class PersonJdbc implements PersonDao {
 				executeUpdate(
 						"REPLACE INTO Person (id, firstName, lastName,"
 								+ "birthday, mail, groupId) VALUES(?,?,?,?,?,?)",
-						p.getId(), p.getFirstName(), p.getLastName(), p.getBirthday(), p.getMail(), p.getGroupId());
+						p.getId(), p.getFirstName(), p.getLastName(), p.getBirthday(), p.getPersonMail().getMail(), p.getGroupId());
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} catch (InterruptedException e) {

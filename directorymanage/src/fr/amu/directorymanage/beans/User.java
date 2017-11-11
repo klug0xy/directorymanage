@@ -4,6 +4,12 @@
  */
 package fr.amu.directorymanage.beans;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.ScopedProxyMode;
+
+@Component()
+@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class User {
 	
 	public long personId;
