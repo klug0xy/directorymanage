@@ -11,6 +11,7 @@
 <c:url var="removeOnePerson" value="/actions/user/removeoneperson" />
 <c:url var="personDetails" value="/actions/user/persondetails" />
 <c:url var="addPerson" value="/actions/user/addperson" />
+<c:url var="group" value="/actions/group" />
 
 
 <html>
@@ -52,9 +53,8 @@
 			<a class="btn btn-success" href="${addPerson}">Add person</a>
 		</div>
 		<div class="form-group">
-			<a class="btn btn-danger" href="${removeAllPersons}">Remove all</a>
+			<a class="btn btn-success" href="${group}">Groups</a>
 		</div>
-
 	</div>
 </body>
 </html>

@@ -32,19 +32,29 @@ public interface IDirectoryManager {
 	void logout(User user);
 	
 	//enregistrer un groupe
-	void saveGroup(Group g);
+	int saveGroup(Group g);
 
 	// enregistrer une personne
 	int savePerson(User user, Person p);
 	
+	int updatePerson(Person person);
+	//supprimer une personne
 	int removeOnePerson(Long personId);
 	
-	void removeOneGroup(Long groupId);
+	int removeOneGroup(Long groupId);
 	
 	Person getPersonByEmail(String personEmail);
 	
 	String getEmailByPersonId(Long personId);
 	
-	 Map<Long, String> getGroupNames();
+	Map<Long, String> getGroupNames();
+	
+	String getGroupName(Long groupId);
+
+	int removeAllPersons();
+
+	int removeAllPersonsGroup(Long groupId);
+
+	int removeAllGroups();
 
 }

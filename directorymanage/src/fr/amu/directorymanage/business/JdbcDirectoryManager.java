@@ -20,18 +20,18 @@ import org.springframework.stereotype.Service;
 
 import fr.amu.directorymanage.beans.Group;
 import fr.amu.directorymanage.beans.Person;
-import fr.amu.directorymanage.beans.PersonMail;
 import fr.amu.directorymanage.beans.User;
 
 @Service
 public class JdbcDirectoryManager implements IDirectoryManager {
 	
 	private JdbcTemplate jdbcTemplate;
-	private BeanPropertyRowMapper<Person> beanPropertyRowMapper = 
+	private BeanPropertyRowMapper<Person> personPropertyRowMapper = 
 			new BeanPropertyRowMapper<Person>(Person.class);
 	private BeanPropertyRowMapper<Group> groupPropertyRowMapper = 
 			new BeanPropertyRowMapper<Group>(Group.class);
-	Person p;
+	Person person;
+	Group group;
 	
 	Collection<Person> persons;
 	Collection<Group> groups;
@@ -50,19 +50,22 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 	
 	static private Person personMapper(ResultSet resultSet, int rank) throws SQLException {
 		Person person = new Person();
-		PersonMail personMail = new PersonMail();
 		Long number = resultSet.getLong("id");
 		String firstName = resultSet.getString("firstName");
 		String lastName = resultSet.getString("lastName");
-		Date birthday = resultSet.getDate("birthday");
 		String mail = resultSet.getString("mail");
+		String website = resultSet.getString("website");
+		Date birthday = resultSet.getDate("birthday");
+		String password = resultSet.getString("password");
+		
 
 		person.setId(number);
 		person.setFirstName(firstName);
 		person.setLastName(lastName);
-		person.setBirthday(birthday);
 		person.setMail(mail);
-		person.setPersonMail(personMail);
+		person.setWebsite(website);
+		person.setBirthday(birthday);
+		person.setPassword(password);
 		return person;
 	}
 
@@ -78,21 +81,22 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 		String sql = "SELECT * FROM Person WHERE groupId = ?";
 		
 		persons = jdbcTemplate.query(sql,
-				new Object[] { groupId }, beanPropertyRowMapper);
+				new Object[] { groupId }, personPropertyRowMapper);
 		return persons;
 	}
 
 	@Override
 	public Person findPerson(User user, Long id) {
 		
-		String sql = "SELECT * FROM Person WHERE id = ?";
+		String sql = "SELECT id,firstName,lastName,mail,website,birthday"
+				+ ",password,groupId FROM Person WHERE id = ?";
 		
 		Object queryForObject = jdbcTemplate.queryForObject(sql,
-				new Object[] { id }, beanPropertyRowMapper);
+				new Object[] { id }, personPropertyRowMapper);
 		
-		p = (Person)queryForObject;
+		person = (Person)queryForObject;
 
-		return p;
+		return person;
 //		return this.jdbcTemplate.que
 //				("SELECT * FROM Person WHERE id ='"+personId+"'",
 //				JdbcDirectoryManager::personMapper);
@@ -100,8 +104,14 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 
 	@Override
 	public Group findGroup(User user, Long groupId) {
-		// TODO Auto-generated method stub
-		return null;
+		String sql = "SELECT id,name FROM Groupe WHERE id = ?";
+		
+		Object queryForObject = jdbcTemplate.queryForObject(sql,
+				new Object[] { groupId }, groupPropertyRowMapper);
+		
+		group = (Group)queryForObject;
+
+		return group;
 	}
 
 	@Override
@@ -117,19 +127,36 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 	}
 
 	@Override
-	public int savePerson(User user, Person p) {
+	public int savePerson(User user, Person person) {
 		String sql = "INSERT INTO Person"
-				+ " (id,firstName,lastName,birthday,mail,groupId)"
-				+ " VALUES (?,?,?,?,?,?)";
+				+ " (id,firstName,lastName,mail,website,birthday,password,groupId)"
+				+ " VALUES (?,?,?,?,?,?,?,?)";
 		int insertedRows;
-		Object[] args = { p.getId(), p.getFirstName(), p.getLastName(),
-				p.getBirthday(), p.getMail(), p.getGroupId() };
-		int[] types = {Types.BIGINT, Types.VARCHAR, Types.VARCHAR, Types.DATE,
-				Types.VARCHAR, Types.BIGINT};
+		Object[] args = { person.getId(), person.getFirstName(), person.getLastName(),
+				person.getMail(), person.getWebsite(), person.getBirthday(), person.getPassword(),
+				person.getGroupId() };
+		int[] types = {Types.BIGINT, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR,
+				Types.VARCHAR, Types.DATE, Types.VARCHAR, Types.BIGINT};
 		insertedRows = jdbcTemplate.update(sql, args, types);
 		return insertedRows;
 		
 
+	}
+	
+	@Override
+	public int updatePerson(Person person) {
+		String sql = "UPDATE Person "
+				+ "SET id = ?, firstName = ?, lastName = ?, mail = ?, "
+				+ "website = ?, birthday = ?, password = ?, groupId = ?"
+				+ " WHERE id = ?;";
+		int modifiedRows;
+		Object[] args = { person.getId(), person.getFirstName(), person.getLastName(),
+				person.getMail(), person.getWebsite(), person.getBirthday(),
+				person.getPassword(), person.getGroupId(), person.getId() };
+		int[] types = {Types.BIGINT, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR,
+				Types.VARCHAR, Types.DATE, Types.VARCHAR, Types.BIGINT, Types.BIGINT};
+		modifiedRows = jdbcTemplate.update(sql, args, types);
+		return modifiedRows;
 	}
 
 	@Override
@@ -137,13 +164,20 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 		
 		String sql = "SELECT * FROM Person";
 		
-		persons = jdbcTemplate.query(sql, beanPropertyRowMapper);
+		persons = jdbcTemplate.query(sql, personPropertyRowMapper);
 		return persons;
 	}
 
 	@Override
-	public void saveGroup(Group g) {
-		// TODO Auto-generated method stub
+	public int saveGroup(Group group) {
+		
+		final String sql = "INSERT INTO Groupe (id,name) VALUES (?,?)";
+		
+		int insertedRows;
+		Object[] args = { group.getId(), group.getName() };
+		int[] types = {Types.BIGINT, Types.VARCHAR};
+		insertedRows = jdbcTemplate.update(sql, args, types);
+		return insertedRows;
 		
 	}
 
@@ -160,21 +194,40 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 	}
 
 	@Override
-	public void removeOneGroup(Long groupId) {
-		// TODO Auto-generated method stub
+	public int removeOneGroup(Long groupId) {
+		
+		String sql = "DELETE FROM Groupe WHERE id = ?";
+		int deletedRows;
+		Object[] args = { groupId };
+		int[] types = {Types.BIGINT};
+		deletedRows = jdbcTemplate.update(sql, args, types);
+		return deletedRows;
 		
 	}
 
 	@Override
 	public Person getPersonByEmail(String personEmail) {
-		// TODO Auto-generated method stub
-		return null;
+		String sql = "SELECT * FROM Person WHERE mail = ?";
+		
+		Object queryForObject = jdbcTemplate.queryForObject(sql,
+				new Object[] { personEmail }, personPropertyRowMapper);
+		
+		person = (Person)queryForObject;
+
+		return person;
 	}
 
 	@Override
 	public String getEmailByPersonId(Long personId) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		String sql = "SELECT mail FROM Person WHERE id = ?";
+		
+		Object queryForObject = jdbcTemplate.queryForObject(sql,
+				new Object[] { personId }, personPropertyRowMapper);
+		
+		String mail = (String)queryForObject;
+
+		return mail;
 	}
 	
 	@Override
@@ -188,6 +241,38 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 			groupNames.put(g.getId(), g.getName());
 		}
 		return groupNames;
+	}
+
+	@Override
+	public String getGroupName(Long groupId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int removeAllPersons() {
+		String sql = "DELETE FROM Person";
+		int deletedRows;
+		deletedRows = jdbcTemplate.update(sql);
+		return deletedRows;
+	}
+
+	@Override
+	public int removeAllPersonsGroup(Long groupId) {
+		String sql = "DELETE FROM Person WHERE groupId = ?";
+		int deletedRows;
+		Object[] args = { groupId };
+		int[] types = {Types.BIGINT};
+		deletedRows = jdbcTemplate.update(sql, args, types);
+		return deletedRows;
+	}
+
+	@Override
+	public int removeAllGroups() {
+		String sql = "DELETE FROM Groupe";
+		int deletedRows;
+		deletedRows = jdbcTemplate.update(sql);
+		return deletedRows;
 	}
 
 }

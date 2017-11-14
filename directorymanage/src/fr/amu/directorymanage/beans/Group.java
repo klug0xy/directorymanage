@@ -1,13 +1,22 @@
 package fr.amu.directorymanage.beans;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 public class Group {
 	
-	public long id;
+	@NotNull
+    @Min(value = 1, message = "Minimal group id is 1")
+	public Long id;
+	
+	@NotNull
+	@Size(min = 1, message = "Name field is mandatory!")
 	public String name;
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public String getName() {

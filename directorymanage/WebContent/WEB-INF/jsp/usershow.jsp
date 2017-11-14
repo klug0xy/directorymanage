@@ -33,6 +33,9 @@
 				</tr>
 			</c:forEach>
 		</table>
+		<div class="form-group">
+			<a class="btn btn-danger" href="${removeAllPersons}">Remove all</a>
+		</div>
 	</div>
 </body>
 </html>

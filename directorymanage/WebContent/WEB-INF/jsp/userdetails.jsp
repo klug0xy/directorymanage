@@ -10,6 +10,7 @@
 <c:url var="removeOnePerson" value="/actions/user/removeoneperson" />
 <c:url var="personDetails" value="/actions/user/persondetails" />
 <c:url var="addPerson" value="/actions/user/addperson" />
+<c:url var="editPerson" value="/actions/user/editperson" />
 
 
 <html>
@@ -26,18 +27,16 @@
 					<td><b>ID</b></td>
 					<td><b>Last Name</b></td>
 					<td><b>First Name</b></td>
-					<td><b>Birthday</b></td>
-					<td><b>Email</b></td>
+					<td><b>Web site</b></td>
 					<td><b>Group</b></td>
 				</tr>
 				<tr>
 					<td><c:out value="${onePerson.id }" /></td>
 					<td><c:out value="${onePerson.lastName}" /></td>
 					<td><c:out value="${onePerson.firstName }" /></td>
-					<td><c:out value="${onePerson.birthday}" /></td>
-					<td><c:out value="${onePerson.mail }" /></td>
-					<td><c:out value="${onePerson.groupId}" /></td>
-					<td><a class="btn btn-success" href="${addPerson}/${onePerson.id}">Edit</a></td>
+					<td><c:out value="${onePerson.website }" /></td>
+					<td><c:out value="${groupNames.get(onePerson.groupId)}" /></td>
+					<td><a class="btn btn-success" href="${editPerson}?personId=${onePerson.id}">Edit</a></td>
 					<td><a class="btn btn-danger" href="${removeOnePerson}/${onePerson.id}">Remove</a></td>
 				</tr>
 		</table>

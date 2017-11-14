@@ -1,7 +1,6 @@
 package fr.amu.directorymanage.beans;
 
-import java.util.Date;
-import javax.validation.Valid;
+import java.sql.Date;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
@@ -25,61 +24,30 @@ public class Person {
 	@Size(min = 1, message = "Last Name is mandatory!")
 	private String lastName;
 	
-	@NotNull
-	@Past
-	@DateTimeFormat(pattern="dd/MM/yyyy")
-	private Date birthday;
-	
-	@NotNull
-	@Valid
-	private PersonMail personMail = new PersonMail();
-	
 	@NotNull(message = "Email field cannot be null!")
-    @Length(max = 50, message = "Not greater than {max} caracteres for Email field!")
+    @Length(max = 50, message = "Not greater than {max} caracteres for Email"
+    		+ "field!")
 	@Email(message="Please provide a valid email address")
     private String mail;
+	
+	@NotNull
+	@Size(min = 10, max = 100, message = "Website must be between [10-100] "
+			+ "characters")
+	private String website;
+	
+	@NotNull
+	@Past
+	/*@DateTimeFormat(pattern="dd/MM/yyyy")*/
+	private Date birthday;
+	
+	@NotNull(message = "Password may not be null")
+	@Size(min = 8, message = "Password must contain at least 8 characters")
+	//@Min(value = 8 ,)
+	private String password;
 	
 	@NotNull(message = "The group id may not be null")
 	@Min(value = 1, message = "The minimal group id is 1")
 	private Long groupId;
-	
-	public boolean valid = false;
-	public String numberMessage;
-	
-	public String getNumberMessage() {
-		return numberMessage;
-	}
-
-	public void setNumberMessage(String numberMessage) {
-		this.numberMessage = numberMessage;
-	}
-
-	public String nameMessage;
-	public String mailMessage;
-	
-	public boolean isValid() {
-		return valid;
-	}
-
-	public void setValid(boolean valid) {
-		this.valid = valid;
-	}
-
-	public String getNameMessage() {
-		return nameMessage;
-	}
-
-	public void setNameMessage(String nameMessage) {
-		this.nameMessage = nameMessage;
-	}
-
-	public String getMailMessage() {
-		return mailMessage;
-	}
-
-	public void setMailMessage(String mailMessage) {
-		this.mailMessage = mailMessage;
-	}
 
 	public Person() {}
 	
@@ -103,6 +71,22 @@ public class Person {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+	
+	public String getMail() {
+		return mail;
+	}
+
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
+	
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
+	}
 
 	public Date getBirthday() {
 		return birthday;
@@ -110,29 +94,21 @@ public class Person {
 	public void setBirthday(Date birthday) {
 		this.birthday = birthday;
 	}
-
-	public PersonMail getPersonMail() {
-		return personMail;
-	}
-
-	public void setPersonMail(PersonMail personMail) {
-		this.personMail = personMail;
-	}
 	
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	public Long getGroupId() {
 		return groupId;
 	}
 
 	public void setGroupId(Long groupId) {
 		this.groupId = groupId;
-	}
-
-	public String getMail() {
-		return mail;
-	}
-
-	public void setMail(String mail) {
-		this.mail = mail;
 	}
 
 }

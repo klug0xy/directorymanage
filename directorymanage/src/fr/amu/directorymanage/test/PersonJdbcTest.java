@@ -18,19 +18,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fr.amu.directorymanage.beans.Person;
-import fr.amu.directorymanage.beans.PersonMail;
 import fr.amu.directorymanage.dao.DAOException;
 import fr.amu.directorymanage.beans.Group;
 import fr.amu.directorymanage.interfaces.PersonDao;
 import fr.amu.directorymanage.jdbc.JdbcTools;
-
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/spring.xml")	
 public class PersonJdbcTest {
 	
 	Person p = new Person();
-	PersonMail personMail = new PersonMail();
 	
 	@Autowired
     private PersonDao personDao;
@@ -112,7 +109,6 @@ public class PersonJdbcTest {
         java.util.Date date = sdf.parse(strDate);
         java.sql.Date sqlDate = new Date(date.getTime());
 		p.setBirthday(sqlDate);
-		personMail.setMail("dej@mail.fr");
 		p.setMail("dej@mail.fr");
 		p.setGroupId(new Long(45855));
 		personDao.savePerson(p);
@@ -129,7 +125,6 @@ public class PersonJdbcTest {
         java.util.Date date = sdf.parse(strDate);
         java.sql.Date sqlDate = new Date(date.getTime());
 		p.setBirthday(sqlDate);
-		personMail.setMail("dej@mail.fr");
 		p.setMail("dej@mail.fr");
 		p.setGroupId(new Long(45855));
 		personDao.savePerson(p);
@@ -146,7 +141,6 @@ public class PersonJdbcTest {
         java.util.Date date = sdf.parse(strDate);
         java.sql.Date sqlDate = new Date(date.getTime());
 		p.setBirthday(sqlDate);
-		personMail.setMail("dejmail.fr");
 		p.setMail("dejmail.fr");
 		p.setGroupId(new Long(45855));
 		personDao.savePerson(p);

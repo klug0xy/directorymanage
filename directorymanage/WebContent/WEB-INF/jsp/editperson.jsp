@@ -6,8 +6,15 @@
 
 <html>
 <head>
-<title>Add person</title>
+<title>Edit person profile</title>
 <%@ include file="/WEB-INF/jsp/head-bootstrap.jsp"%>
+<script type="text/javascript">
+ $(function() {
+	 $("#birthday").datepicker({
+		 dateFormat : "dd/mm/yy"
+	 });
+ }
+</script>
 </head>
 
 <body>
@@ -17,58 +24,59 @@
 	<a href="?language=ar">Arabe</a>
 
 	<div class="container">
-		<h1>Add person</h1>
+		<h1>Edit person</h1>
 
- 		<form:form method="POST" modelAttribute="personForm"> <%--commandName="person"--%> 
+		<form:form method="POST" commandName="person">
 
 			<form:errors path="*" cssClass="alert alert-danger" element="div" />
 
 			<div class="form-group">
 				<label for="id">Id :</label>
-				<form:input class="form-control" path="id" />
+				<form:input class="form-control" path="id" value="${person.id}"/>
 				<form:errors path="id" cssClass="alert alert-warning" element="div" />
 			</div>
 			<div class="form-group">
 				<label for="firstName">First name :</label>
-				<form:input class="form-control" path="firstName" />
+				<form:input class="form-control" path="firstName" value="${person.firstName }"/>
 				<form:errors path="firstName" cssClass="alert alert-warning"
 					element="div" />
 			</div>
 			<div class="form-group">
 				<label for="lastName">Last name :</label>
-				<form:input class="form-control" path="lastName" />
+				<form:input class="form-control" path="lastName" value="${person.lastName }"/>
 				<form:errors path="lastName" cssClass="alert alert-warning"
 					element="div" />
 			</div>
 			<div class="form-group">
 				<label for="mail">Email :</label>
-				<form:input path="mail" class="form-control" />
+				<form:input path="mail" class="form-control" value="${person.mail }"/>
 				<form:errors path="mail" cssClass="alert alert-warning"
 					element="div" />
 			</div>
 			<div class="form-group">
 				<label for="website">Web site :</label>
-				<form:input path="website" class="form-control" />
+				<form:input path="website" class="form-control" value="${person.website }"/>
 				<form:errors path="website" cssClass="alert alert-warning"
 					element="div" />
 			</div>
 			<div class="form-group">
 				<label for="birthday">Birthday :</label>
 				<form:input class="form-control" path="birthday" type="date"
-					id="birthday" />
+					id="birthday" value="${person.birthday }"/>
 				<form:errors path="birthday" cssClass="alert alert-warning"
 					element="div" />
 			</div>
 			<div class="form-group">
 				<label for="password">Password :</label>
-				<form:input type="password" path="password" class="form-control" />
+				<form:input type="password" path="password" 
+				class="form-control" value="${person.password }"/>
 				<form:errors path="password" cssClass="alert alert-warning"
 					element="div" />
 			</div>
 			<div class="form-group">
 				<label for="groupId">Group :</label>
 				<form:select path="groupId" multiple="false" class="form-control">
-					<form:option value="${groupNames.key }" label="--- Select ---" />
+					<form:option value="${person.groupId }" label="--- Select ---" />
 					<form:options items="${groupNames}" />
 				</form:select>
 				<form:errors path="groupId" cssClass="alert alert-warning"
