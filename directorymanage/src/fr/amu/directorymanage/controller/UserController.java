@@ -147,7 +147,7 @@ public class UserController {
 		}
 		logger.info("Mail for person " + person.getFirstName() + " is "
 				+person.getMail());
-		int n = directoryManager.savePerson(user, person);
+		int n = directoryManager.savePersonAuto(person);
 		logger.info(n + " row(s) inserted");
 		return "redirect:userdetails/"+person.getId();
 	}

@@ -24,8 +24,8 @@
 			<form:errors path="*" cssClass="alert alert-danger" element="div" />
 
 			<div class="form-group">
-				<label for="id">Id :</label>
-				<form:input class="form-control" path="id" />
+<!-- 				<label for="id">Id :</label> -->
+				<form:input class="form-control" path="id" type="hidden" value="1"/>
 				<form:errors path="id" cssClass="alert alert-warning" element="div" />
 			</div>
 			<div class="form-group">

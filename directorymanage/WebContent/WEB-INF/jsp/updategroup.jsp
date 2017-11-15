@@ -17,7 +17,7 @@
 	<a href="?language=ar">Arabe</a>
 
 	<div class="container">
-		<h1>Add group</h1>
+		<h1>Edit group</h1>
 
 		<form:form method="POST" modelAttribute="groupForm">
 
@@ -26,13 +26,13 @@
 			<div class="form-group">
 <!-- 				<label for="id">Id :</label> -->
 				<form:input class="form-control" path="id"
-					placeholder="insert group id here" type="hidden" value="1"/>
+					placeholder="insert group id here" type="hidden" value="${group.id }"/>
 				<form:errors path="id" cssClass="alert alert-warning" 
 				element="div" />
 			</div>
 			<div class="form-group">
 				<label for="name">Name :</label>
-				<form:input class="form-control" path="name" />
+				<form:input class="form-control" path="name" value="${group.name }"/>
 				<form:errors path="name" cssClass="alert alert-warning"
 					element="div" />
 			</div>

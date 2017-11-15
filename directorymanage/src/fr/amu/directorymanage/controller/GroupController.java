@@ -88,10 +88,31 @@ public class GroupController {
 			}
 			logger.info("Id for group " + group.getName() + " is "
 					+group.getId());
-			int n = directoryManager.saveGroup(group);
+			int n = directoryManager.saveGroupAuto(group);
 			logger.info(n + " row(s) inserted in table Groupe");
 			return "redirect:findallgroups";
 		}
+		
+		@RequestMapping(value = "/updategroup", method = RequestMethod.GET)
+		public ModelAndView editGroup(@RequestParam("groupId") Long groupId ) {
+			return new ModelAndView("updategroup", "group", 
+					directoryManager.findGroup(user, groupId));
+		}
+		
+		@RequestMapping(value = "/updategroup", method = RequestMethod.POST)
+		public String editGroupPost(@ModelAttribute("groupForm") @Valid Group group, 
+				BindingResult result) {
+			
+			if (result.hasErrors()) {
+				return "updategroup";
+			}
+			logger.info("Id for group " + group.getName() + " is "
+					+group.getId());
+			int n = directoryManager.updateGroup(group);
+			logger.info(n + " row(s) modified in table Groupe");
+			return "redirect:findallgroups";
+		}
+		
 		
 		@RequestMapping(value = "/removeonegroup/{groupId}",
 				method = RequestMethod.GET)

@@ -16,6 +16,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcDaoSupport;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
 import fr.amu.directorymanage.beans.Group;
@@ -26,6 +31,9 @@ import fr.amu.directorymanage.beans.User;
 public class JdbcDirectoryManager implements IDirectoryManager {
 	
 	private JdbcTemplate jdbcTemplate;
+	NamedParameterJdbcDaoSupport namedParameterJdbcDaoSupport = 
+			new NamedParameterJdbcDaoSupport();
+	
 	private BeanPropertyRowMapper<Person> personPropertyRowMapper = 
 			new BeanPropertyRowMapper<Person>(Person.class);
 	private BeanPropertyRowMapper<Group> groupPropertyRowMapper = 
@@ -46,6 +54,8 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 	@Autowired
 	public void setDataSource(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
+		this.namedParameterJdbcDaoSupport.setDataSource(dataSource);
+		
 	}
 	
 	static private Person personMapper(ResultSet resultSet, int rank) throws SQLException {
@@ -125,6 +135,26 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 		// TODO Auto-generated method stub
 
 	}
+	
+	@Override
+	public int savePersonAuto(Person person) {
+		int insertedRows = 0;
+		String sql = "INSERT INTO Person"
+				+ " (firstName,lastName,mail,website,birthday,password"
+				+ ",groupId)"
+				+ " VALUES (:firstName,:lastName,:mail,:website,:birthday"
+				+ ",:password,:groupId)";
+
+		SqlParameterSource fileParameters = 
+				new BeanPropertySqlParameterSource(person);
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+		insertedRows = namedParameterJdbcDaoSupport.
+				getNamedParameterJdbcTemplate().update(sql, fileParameters, 
+						keyHolder);
+		 
+		person.setId(keyHolder.getKey().longValue());
+		return insertedRows;
+	}
 
 	@Override
 	public int savePerson(User user, Person person) {
@@ -139,8 +169,6 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 				Types.VARCHAR, Types.DATE, Types.VARCHAR, Types.BIGINT};
 		insertedRows = jdbcTemplate.update(sql, args, types);
 		return insertedRows;
-		
-
 	}
 	
 	@Override
@@ -179,6 +207,22 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 		insertedRows = jdbcTemplate.update(sql, args, types);
 		return insertedRows;
 		
+	}
+	
+	@Override
+	public int saveGroupAuto(Group group) {
+		int insertedRows = 0;
+		String sql = "INSERT INTO Groupe (name) VALUES (:name)";
+
+		SqlParameterSource fileParameters = 
+				new BeanPropertySqlParameterSource(group);
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+		insertedRows = namedParameterJdbcDaoSupport.
+				getNamedParameterJdbcTemplate().update(sql, fileParameters, 
+						keyHolder);
+		 
+		group.setId(keyHolder.getKey().longValue());
+		return insertedRows;
 	}
 
 	@Override
@@ -273,6 +317,17 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 		int deletedRows;
 		deletedRows = jdbcTemplate.update(sql);
 		return deletedRows;
+	}
+
+	@Override
+	public int updateGroup(Group group) {
+		
+		String sql = "UPDATE Groupe SET name = ? WHERE id = ?;";
+		int modifiedRows;
+		Object[] args = { group.getName(), group.getId() };
+		int[] types = { Types.VARCHAR, Types.BIGINT };
+		modifiedRows = jdbcTemplate.update(sql, args, types);
+		return modifiedRows;
 	}
 
 }

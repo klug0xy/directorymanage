@@ -57,4 +57,10 @@ public interface IDirectoryManager {
 
 	int removeAllGroups();
 
+	int savePersonAuto(Person person);
+
+	int saveGroupAuto(Group group);
+	
+	int updateGroup(Group group);
+
 }

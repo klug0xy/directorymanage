@@ -7,8 +7,8 @@
 <c:url var="findOneGroup" value="/actions/group/findonegroup" />
 <c:url var="removeAllGroups" value="/actions/group/removeallgroups" />
 <c:url var="removeOneGroup" value="/actions/group/removeonegroup" />
-<c:url var="groupDetails" value="/actions/group/groupdetails" />
 <c:url var="addGroup" value="/actions/group/addgroup" />
+<c:url var="updateGroup" value="/actions/group/updategroup" />
 
 <html>
 <head>
@@ -31,6 +31,8 @@
 						<tr>
 							<td><c:out value="${group.key }" /></td>
 							<td><c:out value="${group.value}" /></td>
+							<td><a class="btn btn-info"
+							href="${updateGroup}?groupId=${group.key}">Edit</a></td>
 							<td><a class="btn btn-danger"
 								href="${removeOneGroup}/${group.key}">Remove</a></td>
 						</tr>
@@ -45,6 +47,8 @@
 					<tr>
 						<td><c:out value="${oneGroup.id }" /></td>
 						<td><c:out value="${oneGroup.name}" /></td>
+						<td><a class="btn btn-info"
+							href="${updateGroup}?groupId=${oneGroup.id}">Edit</a></td>
 						<td><a class="btn btn-danger"
 							href="${removeOneGroup}/${oneGroup.id}">Remove</a></td>
 					</tr>

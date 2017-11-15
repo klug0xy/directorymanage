@@ -31,8 +31,8 @@
 			<form:errors path="*" cssClass="alert alert-danger" element="div" />
 
 			<div class="form-group">
-				<label for="id">Id :</label>
-				<form:input class="form-control" path="id" value="${person.id}"/>
+<!-- 				<label for="id">Id :</label> -->
+				<form:input class="form-control" type="hidden" path="id" value="${person.id}"/>
 				<form:errors path="id" cssClass="alert alert-warning" element="div" />
 			</div>
 			<div class="form-group">

@@ -10,6 +10,9 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import fr.amu.directorymanage.annotations.EmailWithTld;
+import fr.amu.directorymanage.annotations.ExtendedEmailValidator;
+
 public class Person {
 	
 	@NotNull
@@ -27,7 +30,7 @@ public class Person {
 	@NotNull(message = "Email field cannot be null!")
     @Length(max = 50, message = "Not greater than {max} caracteres for Email"
     		+ "field!")
-	@Email(message="Please provide a valid email address")
+	@ExtendedEmailValidator(message="Please provide a valid email address")
     private String mail;
 	
 	@NotNull
