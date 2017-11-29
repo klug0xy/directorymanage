@@ -3,14 +3,14 @@
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
-<c:url var="findAllPersons" value="/actions/user/findallpersons" />
+<c:url var="findAllPersons" value="/user/actions/findallpersons" />
 <c:url var="findAllGroupPersons"
-	value="/actions/user/findallgrouppersons" />
-<c:url var="findOnePerson" value="/actions/user/findoneperson" />
-<c:url var="removeAllPersons" value="/actions/user/removeallpersons" />
-<c:url var="removeOnePerson" value="/actions/user/removeoneperson" />
-<c:url var="personDetails" value="/actions/user/userdetails" />
-<c:url var="addPerson" value="/actions/user/addperson" />
+	value="/user/actions/findallgrouppersons" />
+<c:url var="findOnePerson" value="/user/actions/findoneperson" />
+<c:url var="removeAllPersons" value="/user/actions/removeallpersons" />
+<c:url var="removeOnePerson" value="/user/actions/removeoneperson" />
+<c:url var="personDetails" value="/user/actions/userdetails" />
+<c:url var="addPerson" value="/user/actions/addperson" />
 
 
 <html>

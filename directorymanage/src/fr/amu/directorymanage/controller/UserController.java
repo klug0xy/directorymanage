@@ -12,6 +12,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,7 +31,7 @@ import fr.amu.directorymanage.beans.User;
 import fr.amu.directorymanage.business.IDirectoryManager;
 
 @Controller()
-@RequestMapping("/user")
+@RequestMapping("user")
 public class UserController {
 
 	@Autowired
@@ -38,7 +40,10 @@ public class UserController {
 	User user;
 	
 	Person person;
-
+	
+	SimpleUrlAuthenticationSuccessHandler simpleUrlAuthenticationSuccessHandler
+	= new SimpleUrlAuthenticationSuccessHandler();
+	
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	@RequestMapping(value = "")
@@ -47,7 +52,7 @@ public class UserController {
 		return new ModelAndView("user");
 	}
 
-	@RequestMapping(value = "/findallpersons")
+	@RequestMapping(value = "/actions/findallpersons")
 	public ModelAndView findAllPersons() {
 		logger.info("Find all persons in all groups");
 		return new ModelAndView("usershow", "allPersons", persons());
@@ -58,7 +63,7 @@ public class UserController {
 		return directoryManager.findAllPersons();
 	}
 	
-	@RequestMapping(value = "/findallgrouppersons", 
+	@RequestMapping(value = "/actions/findallgrouppersons", 
 			method = RequestMethod.POST)
 	public ModelAndView findAllGroupPersons(@RequestParam Long groupId) {
 		logger.info("Find all persons for group id : " + groupId);
@@ -71,20 +76,20 @@ public class UserController {
 		return directoryManager.findAllGroupPersons(user, groupId);
 	}
 	
-	 @RequestMapping(value = "/findoneperson", method = RequestMethod.POST)
+	 @RequestMapping(value = "/actions/findoneperson", method = RequestMethod.POST)
 	 public ModelAndView findOne(@RequestParam Long personId) {
 	 return new ModelAndView("userdetails", "onePerson", 
 			 directoryManager.findPerson(user, personId));
 	 }
 	 
-	 @RequestMapping(value = "/userdetails/{personId}", 
+	 @RequestMapping(value = "/actions/userdetails/{personId}", 
 			 method = RequestMethod.GET)
 	 public ModelAndView userDetails(@PathVariable("personId") Long personId) {
 	 return new ModelAndView("userdetails", "onePerson", 
 			 directoryManager.findPerson(user, personId));
 	 }
 	 
-	 @RequestMapping(value = "/removeallpersons",
+	 @RequestMapping(value = "/actions/removeallpersons",
 				method = RequestMethod.GET)
 		public ModelAndView removeAllPersons() {
 			int n = directoryManager.removeAllPersons();
@@ -92,16 +97,17 @@ public class UserController {
 			return new ModelAndView("user"/*, "allPersons", persons()*/);
 	 	}
 	 
-	 @RequestMapping(value = "/removeallpersonsgroup/{groupId}",
+	 @RequestMapping(value = "/actions/removeallpersonsgroup/{groupId}",
 				method = RequestMethod.GET)
-		public ModelAndView removeAllPersonsGroup(@PathVariable("groupId") Long groupId) {
+		public ModelAndView removeAllPersonsGroup(@PathVariable("groupId")
+													Long groupId) {
 			int n = directoryManager.removeAllPersonsGroup(groupId);
 			logger.info(n + " deleted all persons from group " + 
 			groupNames().get(groupId) + "");
 			return new ModelAndView("user"/*, "allPersons", persons()*/);
 		}
 
-	@RequestMapping(value = "/removeoneperson/{personId}",
+	@RequestMapping(value = "/actions/removeoneperson/{personId}",
 			method = RequestMethod.GET)
 	public ModelAndView removeOne(@PathVariable("personId") Long personId) {
 		int n = directoryManager.removeOnePerson(personId);
@@ -131,16 +137,16 @@ public class UserController {
 		return person;
 	}
 
-	@RequestMapping(value = "/addperson", method = RequestMethod.GET)
+	@RequestMapping(value = "/actions/addperson", method = RequestMethod.GET)
 	public String addPersonGet(Model model) throws ParseException {
 		
 		model.addAttribute("personForm", newPerson());
 		return "addperson";
 	}
 
-	@RequestMapping(value = "/addperson", method = RequestMethod.POST)
-	public String addPersonPost(@ModelAttribute("personForm") @Valid Person person, 
-			BindingResult result) {
+	@RequestMapping(value = "/actions/addperson", method = RequestMethod.POST)
+	public String addPersonPost(@ModelAttribute("personForm") 
+								@Valid Person person, BindingResult result) {
 		
 		if (result.hasErrors()) {
 			return "addperson";
@@ -152,13 +158,13 @@ public class UserController {
 		return "redirect:userdetails/"+person.getId();
 	}
 	
-	@RequestMapping(value = "/editperson", method = RequestMethod.GET)
+	@RequestMapping(value = "/actions/editperson", method = RequestMethod.GET)
 	public ModelAndView editPerson(@RequestParam("personId") Long personId ) {
 		return new ModelAndView("editperson", "person", 
 				directoryManager.findPerson(user, personId));
 	}
 	
-	@RequestMapping(value = "/editperson", method = RequestMethod.POST)
+	@RequestMapping(value = "/actions/editperson", method = RequestMethod.POST)
 	public String editPersonPost(@ModelAttribute @Valid Person person, 
 			BindingResult result) {
 		

@@ -3,12 +3,12 @@
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
-<c:url var="findAllGroups" value="/actions/group/findallgroups" />
-<c:url var="findOneGroup" value="/actions/group/findonegroup" />
-<c:url var="removeAllGroups" value="/actions/group/removeallgroups" />
-<c:url var="removeOneGroup" value="/actions/group/removeonegroup" />
-<c:url var="addGroup" value="/actions/group/addgroup" />
-<c:url var="updateGroup" value="/actions/group/updategroup" />
+<c:url var="findAllGroups" value="/group/actions/findallgroups" />
+<c:url var="findOneGroup" value="/group/actions/findonegroup" />
+<c:url var="removeAllGroups" value="/group/actions/removeallgroups" />
+<c:url var="removeOneGroup" value="/group/actions/removeonegroup" />
+<c:url var="addGroup" value="/group/actions/addgroup" />
+<c:url var="updateGroup" value="/group/actions/updategroup" />
 
 <html>
 <head>

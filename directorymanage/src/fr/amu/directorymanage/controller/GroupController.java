@@ -45,13 +45,13 @@ public class GroupController {
 		return directoryManager.getGroupNames();
 	}
 	
-	@RequestMapping(value = "/findallgroups")
+	@RequestMapping(value = "/actions/findallgroups")
 	public ModelAndView findAllGroups() {
 		logger.info("Find all groups");
 		return new ModelAndView("groupshow", "groupNames", groupNames());
 	}
 	
-	 @RequestMapping(value = "/findonegroup", method = RequestMethod.POST)
+	 @RequestMapping(value = "/actions/findonegroup", method = RequestMethod.POST)
 	 public ModelAndView findOneGroup(@RequestParam Long groupId) {
 
 		 logger.info("Find "+groupNames().get(groupId) +" group");
@@ -72,14 +72,14 @@ public class GroupController {
 			return group;
 		}
 	 
-	 @RequestMapping(value = "/addgroup", method = RequestMethod.GET)
+	 @RequestMapping(value = "/actions/addgroup", method = RequestMethod.GET)
 		public String addGroupGet(Model model) throws ParseException {
 			
 			model.addAttribute("groupForm", newGroup());
 			return "addgroup";
 		}
 
-		@RequestMapping(value = "/addgroup", method = RequestMethod.POST)
+		@RequestMapping(value = "/actions/addgroup", method = RequestMethod.POST)
 		public String addGroupPost(@ModelAttribute("groupForm") @Valid Group group, 
 				BindingResult result) {
 			
@@ -93,13 +93,13 @@ public class GroupController {
 			return "redirect:findallgroups";
 		}
 		
-		@RequestMapping(value = "/updategroup", method = RequestMethod.GET)
+		@RequestMapping(value = "/actions/updategroup", method = RequestMethod.GET)
 		public ModelAndView editGroup(@RequestParam("groupId") Long groupId ) {
 			return new ModelAndView("updategroup", "group", 
 					directoryManager.findGroup(user, groupId));
 		}
 		
-		@RequestMapping(value = "/updategroup", method = RequestMethod.POST)
+		@RequestMapping(value = "/actions/updategroup", method = RequestMethod.POST)
 		public String editGroupPost(@ModelAttribute("groupForm") @Valid Group group, 
 				BindingResult result) {
 			
@@ -114,7 +114,7 @@ public class GroupController {
 		}
 		
 		
-		@RequestMapping(value = "/removeonegroup/{groupId}",
+		@RequestMapping(value = "/actions/removeonegroup/{groupId}",
 				method = RequestMethod.GET)
 		public String removeOneGroup(@PathVariable("groupId") Long groupId) {
 			int n = directoryManager.removeOneGroup(groupId);
@@ -122,7 +122,7 @@ public class GroupController {
 			return "redirect:../findallgroups";
 		}
 		
-		@RequestMapping(value = "/removeallgroups", method = RequestMethod.GET)
+		@RequestMapping(value = "/actions/removeallgroups", method = RequestMethod.GET)
 		public String removeAllGroups() {
 			int n = directoryManager.removeAllGroups();
 			logger.info(n + " deleted all groups");

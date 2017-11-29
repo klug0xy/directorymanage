@@ -3,13 +3,13 @@
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
-<c:url var="findAllGroups" value="/actions/group/findallgroups" />
-<c:url var="findOneGroup" value="/actions/group/findonegroup" />
-<c:url var="removeAllGroups" value="/actions/group/removeallgroups" />
-<c:url var="removeOneGroup" value="/actions/group/removeonegroup" />
-<c:url var="groupDetails" value="/actions/group/groupdetails" />
-<c:url var="addGroup" value="/actions/group/addgroup" />
-<c:url var="persons" value="/actions/user" />
+<c:url var="findAllGroups" value="/group/actions/findallgroups" />
+<c:url var="findOneGroup" value="/group/actions/findonegroup" />
+<c:url var="removeAllGroups" value="/group/actions/removeallgroups" />
+<c:url var="removeOneGroup" value="/group/actions/removeonegroup" />
+<c:url var="groupDetails" value="/group/actions/groupdetails" />
+<c:url var="addGroup" value="/group/actions/addgroup" />
+<c:url var="persons" value="/user" />
 
 <html>
 <head>
@@ -24,12 +24,14 @@
 			<a class="btn btn-success" href="${findAllGroups}">Find all
 				groups</a>
 		</div>
-		<form action="${pageContext.request.contextPath }/actions/group/findonegroup"
+		<form action="${pageContext.request.contextPath }/group/actions/findonegroup"
 			method="POST" class="form-inline">
 
 			<div class="form-group">
 				<input id="groupId" name="groupId" size="20" class="form-control" />
 			</div>
+			<input type="hidden" name="${_csrf.parameterName}"
+											value="${_csrf.token}" />
 			<div class="form-group">
 				<input type="submit" value="Find group"
 					class="form-control btn btn-info" />
@@ -42,5 +44,6 @@
 			<a class="btn btn-success" href="${persons}">Persons</a>
 		</div>
 	</div>
+	<a href="${ pageContext.request.contextPath}/login?logout">Logout</a>
 </body>
 </html>
