@@ -260,6 +260,18 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 
 		return person;
 	}
+	
+//	@Override
+//	public Person getIdByPersonEmail(String personEmail) {
+//		String sql = "SELECT id FROM Person WHERE mail = ?";
+//		
+//		Object queryForObject = jdbcTemplate.queryForObject(sql,
+//				new Object[] { personEmail }, personPropertyRowMapper);
+//		
+//		person = (Person)queryForObject;
+//
+//		return person;
+//	}
 
 	@Override
 	public String getEmailByPersonId(Long personId) {

@@ -12,7 +12,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -160,8 +164,29 @@ public class UserController {
 	
 	@RequestMapping(value = "/actions/editperson", method = RequestMethod.GET)
 	public ModelAndView editPerson(@RequestParam("personId") Long personId ) {
-		return new ModelAndView("editperson", "person", 
-				directoryManager.findPerson(user, personId));
+		ModelAndView model = new ModelAndView();
+		String username = "";
+		Long authUserId = new Long(0);
+		// check if user is login
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth.getPrincipal() != null) {
+			UserDetails userDetail = (UserDetails) auth.getPrincipal();
+			username = userDetail.getUsername();
+		}
+		if (username != "" && username != null) {
+			person = directoryManager.getPersonByEmail(username);
+			authUserId = person.getId();
+		}
+		if (personId == authUserId) {
+			model.addObject("person", directoryManager.findPerson(user, personId));
+			model.setViewName("editperson");
+		}
+		else if (personId != authUserId) {
+			model.addObject("username", username);	
+			model.setViewName("403");
+		}
+		return model;
+		
 	}
 	
 	@RequestMapping(value = "/actions/editperson", method = RequestMethod.POST)

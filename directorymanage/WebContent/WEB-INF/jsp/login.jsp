@@ -45,7 +45,7 @@
 								<form id="login-form" action="${loginUrl }" method="post" role="form"
 									style="display: block;">
 									<div class="form-group">
-										<input type="text" name="username" id="username" tabindex="1" 
+										<input type="text" name="mail" id="mail" tabindex="1" 
 										class="form-control" placeholder="Email" value=""/>
 									</div>
 									<div class="form-group">

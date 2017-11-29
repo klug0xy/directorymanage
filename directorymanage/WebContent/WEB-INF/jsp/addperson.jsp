@@ -15,7 +15,8 @@
 	<a href="?language=en">English</a>|
 	<a href="?language=fr">Français</a>|
 	<a href="?language=ar">Arabe</a>
-
+	<a style="position:fixed;top:5px;right:5px;margin:0;padding:5px 3px;"
+	href="<c:url value="/"></c:url>">Home</a>
 	<div class="container">
 		<h1>Add person</h1>
 

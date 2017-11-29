@@ -17,6 +17,8 @@
 <%@ include file="/WEB-INF/jsp/head-bootstrap.jsp"%>
 </head>
 <body>
+	<a style="position:fixed;top:5px;right:5px;margin:0;padding:5px 3px;"
+	href="<c:url value="/"></c:url>">Home</a>
 	<div class="container">
 		<h1>Groups</h1>
 

@@ -4,7 +4,9 @@ password recovery mecanism
 test plan (unit, integration)
 validate html pages (html 5)
 
+when i stop tomcat server, the user still connected ??
 when user is connected, we can access from another window (same webrowser) 
 logout with post method ???
 
-when url is "directorymanage/login?logout" and i click log in bouton --> 405 post method not supported 	
+when url is "directorymanage/login?logout" and i click log in bouton --> 405 post method not supported
+got errors in stacktrace when username and password fields are blank 	
