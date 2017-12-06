@@ -1,0 +1,38 @@
+<!ELEMENT dataset (
+    Groupe*,
+    Person*,
+PersonsTokens*,
+User_roles*)>
+
+<!ELEMENT Groupe EMPTY>
+<!ATTLIST Groupe
+    id CDATA #REQUIRED
+    name CDATA #REQUIRED
+>
+
+<!ELEMENT Person EMPTY>
+<!ATTLIST Person
+    id CDATA #REQUIRED
+    firstName CDATA #REQUIRED
+    lastName CDATA #REQUIRED
+mail CDATA #REQUIRED
+website CDATA #REQUIRED
+    birthday CDATA #REQUIRED
+    password CDATA #REQUIRED
+    groupId CDATA #IMPLIED
+enabled CDATA #REQUIRED
+>
+
+<!ELEMENT PersonsTokens EMPTY>
+<!ATTLIST PersonsTokens
+    id CDATA #REQUIRED
+    personId CDATA #REQUIRED
+token CDATA #REQUIRED
+expiryDate CDATA #REQUIRED
+>
+
+<!ELEMENT User_roles EMPTY>
+<!ATTLIST User_roles
+    username CDATA #REQUIRED
+    role CDATA #REQUIRED
+>

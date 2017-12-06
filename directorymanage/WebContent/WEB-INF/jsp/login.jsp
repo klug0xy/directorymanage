@@ -2,20 +2,22 @@
 	pageEncoding="UTF-8"%>
 <%@page session="true"%>
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ include file="/WEB-INF/jsp/head-bootstrap.jsp"%>
-<%@ include file="/WEB-INF/jsp/head-index.jsp"%>
+<%@ include file="/WEB-INF/jsp/include-login.jsp"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ page isELIgnored="false"%>
 <c:url var="addPerson" value="user/actions/addperson" />
+<c:url var="recover" value="/recover" />
 <!DOCTYPE html>
 <html>
 <head>
-
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<script src="<c:url value="resources/js/test.js" />"></script>
 <title>Directory manage - Login</title>
 </head>
 <body>
+	<div class="top-right-home">
+		<a href="<c:url value="/"/>">Home</a>
+	</div>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6 col-md-offset-3">
@@ -25,9 +27,11 @@
 							<div class="col-xs-6">
 								<a href="#" class="active" id="login-form-link">Login</a>
 							</div>
-							<div class="col-xs-6">
-								<a href="${addperson }" id="register-form-link" onclick="changeContent()">Register</a>
-							</div>
+							<sec:authorize access="hasRole('ROLE_ADMIN')">
+								<div class="col-xs-6">
+									<a href="${addperson }" id="register-form-link" onclick="changeContent()">Register</a>
+								</div>
+							</sec:authorize>
 						</div>
 						<hr>
 					</div>
@@ -35,10 +39,10 @@
 						<div class="row">
 							<div class="col-lg-12">
 								<c:if test="${not empty error}">
-									<div class="error">${error}</div>
+									<div class="error"><p>${error}</p></div>
 								</c:if>
 								<c:if test="${not empty msg}">
-									<div class="msg">${msg}</div>
+									<div class="msg"><p>${msg}</p></div>
 								</c:if>
 								<c:url var="loginUrl" value="/login" />
 								<c:url var="loginUrlCsrf" value="/login?${_csrf.parameterName}=${_csrf.token}" />
@@ -72,7 +76,7 @@
 										<div class="row">
 											<div class="col-lg-12">
 												<div class="text-center">
-													<a href="https://phpoll.com/recover" tabindex="5"
+													<a href="${recover }" tabindex="5"
 														class="forgot-password">Forgot Password?</a>
 												</div>
 											</div>

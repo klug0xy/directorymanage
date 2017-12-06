@@ -18,7 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fr.amu.directorymanage.beans.Person;
-import fr.amu.directorymanage.dao.DAOException;
+import fr.amu.directorymanage.exceptions.DAOException;
 import fr.amu.directorymanage.beans.Group;
 import fr.amu.directorymanage.interfaces.PersonDao;
 import fr.amu.directorymanage.jdbc.JdbcTools;

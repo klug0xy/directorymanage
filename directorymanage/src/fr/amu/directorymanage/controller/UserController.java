@@ -12,12 +12,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -31,8 +28,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import fr.amu.directorymanage.beans.Person;
-import fr.amu.directorymanage.beans.User;
 import fr.amu.directorymanage.business.IDirectoryManager;
+import fr.amu.directorymanage.business.IPersonService;
 
 @Controller()
 @RequestMapping("user")
@@ -41,12 +38,9 @@ public class UserController {
 	@Autowired
 	IDirectoryManager directoryManager;
 	@Autowired
-	User user;
+	IPersonService personService;
 	
 	Person person;
-	
-	SimpleUrlAuthenticationSuccessHandler simpleUrlAuthenticationSuccessHandler
-	= new SimpleUrlAuthenticationSuccessHandler();
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -56,10 +50,24 @@ public class UserController {
 		return new ModelAndView("user");
 	}
 
-	@RequestMapping(value = "/actions/findallpersons")
-	public ModelAndView findAllPersons() {
+	@RequestMapping(value = "/actions/findallpersons", 
+			method = RequestMethod.GET)
+	public ModelAndView findAllPersons(@RequestParam (value = "offset", 
+	required = false) Integer offset) {
+		ModelAndView model = new ModelAndView();
+		if (offset == null) offset = new Integer(0);
+		
+		Integer maxRows = new Integer(10);
+		Integer count = new Integer(0);
+		count = directoryManager.countPersons();
+		model.addObject("offset", offset);
+		model.addObject("maxRows", maxRows);
+		model.addObject("count", count);
+		model.addObject("persons", directoryManager.findLimitPersons(offset,
+				maxRows));
+		model.setViewName("userdetails");
 		logger.info("Find all persons in all groups");
-		return new ModelAndView("usershow", "allPersons", persons());
+		return model;
 	}
 
 	@ModelAttribute("allPersons")
@@ -68,29 +76,78 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/actions/findallgrouppersons", 
-			method = RequestMethod.POST)
-	public ModelAndView findAllGroupPersons(@RequestParam Long groupId) {
-		logger.info("Find all persons for group id : " + groupId);
-		return new ModelAndView("usershow", "allPersons", 
-				persons(user, groupId));
+			method = { RequestMethod.POST, RequestMethod.GET})
+	public ModelAndView findAllGroupPersons(@RequestParam (value = "groupName",
+	required = false) String groupName, @RequestParam (value = "offset", 
+	required = false) Integer offset, @RequestParam (value = "groupId", 
+	required = false) Long groupId){
+		
+		ModelAndView model = new ModelAndView();
+		Collection<Person> persons;
+		if (offset == null) offset = new Integer(0);
+		//extract groupName with groupId
+		for ( Long key : groupNames().keySet() ){
+			String actualGroupName = groupNames().get(key);
+			logger.info("Actual group name : "+actualGroupName+" groupName = "
+			+groupName);
+			if (groupName != null && actualGroupName.contains
+					(groupName.toUpperCase())){
+				groupId = key;
+			}
+		}
+		Integer maxRows = new Integer(10);
+		Integer count = new Integer(0);
+		count = directoryManager.countGroupPersons(groupId);
+		model.addObject("offset", offset);
+		model.addObject("maxRows", maxRows);
+		model.addObject("count", count);
+		if (groupName != null) {
+			model.addObject("groupName", groupName);
+		}
+		if (groupId != null) {
+			model.addObject("groupId", groupId);
+		}
+		else {
+			logger.info("WARNING : groupId = "+groupId);
+		}
+		persons  = directoryManager.
+				findLimitGroupPersonsByGroupName(groupName, groupId, offset,
+						maxRows);
+		model.addObject("persons", persons);
+		model.addObject("groupNames", groupNames());
+		model.setViewName("userdetails");
+		logger.info("Find all persons for "+groupName+" group");
+		return model;
 	}
 
 	@ModelAttribute("allPersons")
-	public Collection<Person> persons(User user, Long groupId) {
-		return directoryManager.findAllGroupPersons(user, groupId);
+	public Collection<Person> persons(Long groupId) {
+		return directoryManager.findAllGroupPersons(groupId);
 	}
 	
-	 @RequestMapping(value = "/actions/findoneperson", method = RequestMethod.POST)
+	 @RequestMapping(value = "/actions/findoneperson", method = 
+			 RequestMethod.POST)
 	 public ModelAndView findOne(@RequestParam Long personId) {
 	 return new ModelAndView("userdetails", "onePerson", 
-			 directoryManager.findPerson(user, personId));
+			 directoryManager.findPerson(personId));
+	 }
+	 
+	 @RequestMapping(value = "/actions/findpersons", method = 
+			 RequestMethod.POST)
+	 public ModelAndView findPersons(@RequestParam String personName) {
+		 ModelAndView modelAndView = new ModelAndView();
+		 modelAndView.addObject("persons", directoryManager.
+				 findPersonByName(personName));
+		 modelAndView.addObject("personName", personName);
+		 modelAndView.setViewName("userdetails");
+	 return modelAndView;
 	 }
 	 
 	 @RequestMapping(value = "/actions/userdetails/{personId}", 
 			 method = RequestMethod.GET)
 	 public ModelAndView userDetails(@PathVariable("personId") Long personId) {
 	 return new ModelAndView("userdetails", "onePerson", 
-			 directoryManager.findPerson(user, personId));
+			 directoryManager.findPerson(personId));
 	 }
 	 
 	 @RequestMapping(value = "/actions/removeallpersons",
@@ -98,7 +155,7 @@ public class UserController {
 		public ModelAndView removeAllPersons() {
 			int n = directoryManager.removeAllPersons();
 			logger.info(n + " deleted all persons from all groups ");
-			return new ModelAndView("user"/*, "allPersons", persons()*/);
+			return new ModelAndView("user");
 	 	}
 	 
 	 @RequestMapping(value = "/actions/removeallpersonsgroup/{groupId}",
@@ -108,7 +165,7 @@ public class UserController {
 			int n = directoryManager.removeAllPersonsGroup(groupId);
 			logger.info(n + " deleted all persons from group " + 
 			groupNames().get(groupId) + "");
-			return new ModelAndView("user"/*, "allPersons", persons()*/);
+			return new ModelAndView("user");
 		}
 
 	@RequestMapping(value = "/actions/removeoneperson/{personId}",
@@ -116,16 +173,11 @@ public class UserController {
 	public ModelAndView removeOne(@PathVariable("personId") Long personId) {
 		int n = directoryManager.removeOnePerson(personId);
 		logger.info(n + " deleted person(s) " + personId + "");
-		return new ModelAndView("user"/*, "allPersons", persons()*/);
+		return new ModelAndView("user");
 	}
 
 	@ModelAttribute("personForm")
-	public Person newPerson(/*@RequestParam(value = "id", required = false) 
-	Long personId*/) throws ParseException{
-		// if (personId != null) {
-		// logger.info("find person " + personId);
-		// return dirmang.findPerson(user, personId);
-		// }
+	public Person newPerson() throws ParseException {
 		Person person = new Person();
 		person.setId(new Long(0));
 		person.setFirstName("");
@@ -163,13 +215,17 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/actions/editperson", method = RequestMethod.GET)
-	public ModelAndView editPerson(@RequestParam("personId") Long personId ) {
+	public ModelAndView editPerson(@RequestParam(value = "personId", 
+	required = false) Long personId,  @RequestParam(value = "personMail", 
+	required = false) String personMail) {
 		ModelAndView model = new ModelAndView();
 		String username = "";
 		Long authUserId = new Long(0);
 		// check if user is login
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth.getPrincipal() != null) {
+		Authentication auth = SecurityContextHolder.getContext().
+				getAuthentication();
+		if ( (auth.getPrincipal() != null) && (auth.getPrincipal() 
+				instanceof UserDetails) ) {
 			UserDetails userDetail = (UserDetails) auth.getPrincipal();
 			username = userDetail.getUsername();
 		}
@@ -177,8 +233,10 @@ public class UserController {
 			person = directoryManager.getPersonByEmail(username);
 			authUserId = person.getId();
 		}
-		if (personId == authUserId) {
-			model.addObject("person", directoryManager.findPerson(user, personId));
+		if (personMail != null) personId = person.getId();
+		if (personId == authUserId || personService.hasRole("ROLE_ADMIN")) {
+			model.addObject("person", directoryManager.
+					findPerson(personId));
 			model.setViewName("editperson");
 		}
 		else if (personId != authUserId) {
@@ -197,10 +255,12 @@ public class UserController {
 			return "editperson";
 		}
 		
-		int n = directoryManager.updatePerson(person);
+		int personModifiedRows = directoryManager.updatePerson(person);
+		int userRolesModifiedRows = directoryManager.updateUsernameUserRoles(person);
 		logger.info("Person " + person.getId() + " is Modified");
-		logger.info(n + " row(s) modified");
-		return "redirect:userdetails/"+person.getId();
+		logger.info(personModifiedRows + " row(s) modified in table Person");
+		logger.info(userRolesModifiedRows + " row(s) modified in table User_roles");
+		return "redirect:findallpersons";
 	}
 
 	@ModelAttribute("groupNames")

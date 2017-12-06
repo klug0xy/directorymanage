@@ -1,6 +1,7 @@
 package fr.amu.directorymanage.controller;
 
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import fr.amu.directorymanage.beans.Group;
-import fr.amu.directorymanage.beans.User;
 import fr.amu.directorymanage.business.IDirectoryManager;
 
 @Controller()
@@ -28,9 +28,6 @@ public class GroupController {
 	
 	@Autowired
 	IDirectoryManager directoryManager;
-	
-	@Autowired
-	User user;
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
@@ -45,27 +42,42 @@ public class GroupController {
 		return directoryManager.getGroupNames();
 	}
 	
-	@RequestMapping(value = "/actions/findallgroups")
-	public ModelAndView findAllGroups() {
+	@RequestMapping(value = "/actions/findallgroups", 
+			method = RequestMethod.GET)
+	public ModelAndView findAllGroups(@RequestParam (value = "offset", 
+	required = false) Integer offset) {
+		
+		ModelAndView model = new ModelAndView();
+		if (offset == null) offset = new Integer(0);
+		Integer maxRows = new Integer(10);
+		Integer count = new Integer(0);
+		count = directoryManager.countGroups();
+		model.addObject("offset", offset);
+		model.addObject("maxRows", maxRows);
+		model.addObject("count", count);
+		model.addObject("limitGroups", directoryManager.getLimitGroupNames
+				(offset, maxRows));
+		model.setViewName("groupshow");
 		logger.info("Find all groups");
-		return new ModelAndView("groupshow", "groupNames", groupNames());
+		return model;
 	}
 	
-	 @RequestMapping(value = "/actions/findonegroup", method = RequestMethod.POST)
-	 public ModelAndView findOneGroup(@RequestParam Long groupId) {
-
-		 logger.info("Find "+groupNames().get(groupId) +" group");
-		 return new ModelAndView("groupshow", "oneGroup", 
-			 directoryManager.findGroup(user, groupId));
+	 @RequestMapping(value = "/actions/findonegroup", 
+			 method = RequestMethod.POST)
+	 public ModelAndView findOneGroup(@RequestParam String groupName) {
+		 
+		 Collection<Group> groups;
+		 ModelAndView modelAndView = new ModelAndView();
+		 modelAndView.addObject("groupName", groupName);
+		 groups = directoryManager.findGroupsByName(groupName);
+		 modelAndView.addObject("groups", groups);
+		 modelAndView.setViewName("groupshow");
+		 logger.info("Find groups that contains"+groupName);
+		 return modelAndView;
 	 }
 	 
 	 @ModelAttribute("groupForm")
-		public Group newGroup(/*@RequestParam(value = "id", required = false) 
-		Long personId*/) throws ParseException{
-			// if (personId != null) {
-			// logger.info("find person " + personId);
-			// return dirmang.findPerson(user, personId);
-			// }
+		public Group newGroup() throws ParseException{
 			Group group = new Group();
 			group.setId(new Long(0));
 			group.setName("");
@@ -79,9 +91,10 @@ public class GroupController {
 			return "addgroup";
 		}
 
-		@RequestMapping(value = "/actions/addgroup", method = RequestMethod.POST)
-		public String addGroupPost(@ModelAttribute("groupForm") @Valid Group group, 
-				BindingResult result) {
+		@RequestMapping(value = "/actions/addgroup", 
+				method = RequestMethod.POST)
+		public String addGroupPost(@ModelAttribute("groupForm") 
+		@Valid Group group, BindingResult result) {
 			
 			if (result.hasErrors()) {
 				return "addgroup";
@@ -93,15 +106,17 @@ public class GroupController {
 			return "redirect:findallgroups";
 		}
 		
-		@RequestMapping(value = "/actions/updategroup", method = RequestMethod.GET)
+		@RequestMapping(value = "/actions/updategroup", 
+				method = RequestMethod.GET)
 		public ModelAndView editGroup(@RequestParam("groupId") Long groupId ) {
 			return new ModelAndView("updategroup", "group", 
-					directoryManager.findGroup(user, groupId));
+					directoryManager.findGroup(groupId));
 		}
 		
-		@RequestMapping(value = "/actions/updategroup", method = RequestMethod.POST)
-		public String editGroupPost(@ModelAttribute("groupForm") @Valid Group group, 
-				BindingResult result) {
+		@RequestMapping(value = "/actions/updategroup", 
+				method = RequestMethod.POST)
+		public String editGroupPost(@ModelAttribute("groupForm") 
+		@Valid Group group, BindingResult result) {
 			
 			if (result.hasErrors()) {
 				return "updategroup";
@@ -122,7 +137,8 @@ public class GroupController {
 			return "redirect:../findallgroups";
 		}
 		
-		@RequestMapping(value = "/actions/removeallgroups", method = RequestMethod.GET)
+		@RequestMapping(value = "/actions/removeallgroups", 
+				method = RequestMethod.GET)
 		public String removeAllGroups() {
 			int n = directoryManager.removeAllGroups();
 			logger.info(n + " deleted all groups");

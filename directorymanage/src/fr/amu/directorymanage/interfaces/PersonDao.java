@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import fr.amu.directorymanage.beans.Group;
 import fr.amu.directorymanage.beans.Person;
-import fr.amu.directorymanage.dao.DAOException;
+import fr.amu.directorymanage.exceptions.DAOException;
 
 public interface PersonDao {
 

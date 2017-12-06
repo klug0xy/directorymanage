@@ -9,4 +9,20 @@ when user is connected, we can access from another window (same webrowser)
 logout with post method ???
 
 when url is "directorymanage/login?logout" and i click log in bouton --> 405 post method not supported
-got errors in stacktrace when username and password fields are blank 	
+got errors in stacktrace when username and password fields are blank
+must verify email, it's unique 
+limit number off bad authentication attempts
+change	map (actual:LinkedHashMap) type in getGroupNames method in JdbcDirectoryManager class ?
+acces login page when i'm logged ? display what ?
+check expired token for password reset
+check all exceptions
+check valid email
+check email unicity 
+bug find all group persons pagination
+you must not call init from extern class
+if person doesn't exists exception
+
+SELECT CONCAT_WS(" ", `first_name`, `last_name`) AS `whole_name` FROM `users`
+
+p.id, p.firstName, p.lastName, p.mail, p.website,"
+				+ " p.birthday, p.password, p.groupId, p.enabled "

@@ -1,8 +1,5 @@
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<!DOCTYPE html>
-
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
-
+<%@ include file="/WEB-INF/jsp/head-bootstrap.jsp"%>
 <c:url var="findAllPersons" value="/user/actions/findallpersons" />
 <c:url var="findAllGroupPersons"
 	value="/user/actions/findallgrouppersons" />
@@ -12,16 +9,25 @@
 <c:url var="personDetails" value="/user/actions/persondetails" />
 <c:url var="addPerson" value="/user/actions/addperson" />
 <c:url var="group" value="/group" />
-
-
+<!DOCTYPE html>
 <html>
 <head>
 <title>Directory manage - Persons</title>
-<%@ include file="/WEB-INF/jsp/head-bootstrap.jsp"%>
 </head>
 <body>
-	<a style="position:fixed;top:5px;right:5px;margin:0;padding:5px 3px;"
-	href="<c:url value="/"></c:url>">Home</a>
+	<div class="top-right-home">
+		<a href="<c:url value="/"/>">Home</a>
+	</div>
+	<div class="top-right-login">
+		<sec:authorize access="isAnonymous()">
+			<a href="${ pageContext.request.contextPath}/login">Login</a>
+		</sec:authorize>
+	</div>
+	<div class="top-right-logout">
+		<sec:authorize access="isAuthenticated()">
+			<a href="${ pageContext.request.contextPath}/login?logout">Logout</a>
+		</sec:authorize>
+	</div>
 	<div class="container">
 		<h1>Persons</h1>
 
@@ -29,7 +35,7 @@
 			action="${pageContext.request.contextPath }/user/actions/findallgrouppersons"
 			method="POST" class="form-inline">
 			<div class="form-group">
-				<input id="groupId" name="groupId" size="20" class="form-control" />
+				<input id="groupName" name="groupName" size="20" class="form-control" />
 			</div>
 			<input type="hidden" name="${_csrf.parameterName}"
 											value="${_csrf.token}" />
@@ -38,11 +44,11 @@
 					class="form-control btn btn-info" />
 			</div>
 		</form>
-		<form action="${pageContext.request.contextPath }/user/actions/findoneperson"
+		<form action="${pageContext.request.contextPath }/user/actions/findpersons"
 			method="POST" class="form-inline">
 
 			<div class="form-group">
-				<input id="personId" name="personId" size="20" class="form-control" />
+				<input id="personName" name="personName" size="20" class="form-control" />
 			</div>
 			<input type="hidden" name="${_csrf.parameterName}"
 											value="${_csrf.token}" />
@@ -55,13 +61,14 @@
 			<a class="btn btn-success" href="${findAllPersons}">Find all
 				persons</a>
 		</div>
+		<sec:authorize access="hasRole('ROLE_ADMIN')">
+			<div class="form-group">
+				<a class="btn btn-success" href="${addPerson}">Add person</a>
+			</div>
+		</sec:authorize>
 		<div class="form-group">
-			<a class="btn btn-success" href="${addPerson}">Add person</a>
-		</div>
-		<div class="form-group">
-			<a class="btn btn-success" href="${group}">Groups</a>
+			<a class="btn btn-success" href="${group}">Groups directory</a>
 		</div>
 	</div>
-	<a href="${ pageContext.request.contextPath}/login?logout">Logout</a>
 </body>
 </html>

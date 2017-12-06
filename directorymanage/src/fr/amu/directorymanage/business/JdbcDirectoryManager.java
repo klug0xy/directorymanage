@@ -1,14 +1,12 @@
 package fr.amu.directorymanage.business;
 
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
@@ -25,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import fr.amu.directorymanage.beans.Group;
 import fr.amu.directorymanage.beans.Person;
-import fr.amu.directorymanage.beans.User;
 
 @Service
 public class JdbcDirectoryManager implements IDirectoryManager {
@@ -40,6 +37,9 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 			new BeanPropertyRowMapper<Group>(Group.class);
 	Person person;
 	Group group;
+	
+	@Autowired
+	IPersonService personService;
 	
 	Collection<Person> persons;
 	Collection<Group> groups;
@@ -58,45 +58,39 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 		
 	}
 	
-	static private Person personMapper(ResultSet resultSet, int rank) throws SQLException {
-		Person person = new Person();
-		Long number = resultSet.getLong("id");
-		String firstName = resultSet.getString("firstName");
-		String lastName = resultSet.getString("lastName");
-		String mail = resultSet.getString("mail");
-		String website = resultSet.getString("website");
-		Date birthday = resultSet.getDate("birthday");
-		String password = resultSet.getString("password");
-		
-
-		person.setId(number);
-		person.setFirstName(firstName);
-		person.setLastName(lastName);
-		person.setMail(mail);
-		person.setWebsite(website);
-		person.setBirthday(birthday);
-		person.setPassword(password);
-		return person;
-	}
-
-
 	@Override
-	public User newUser() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public Collection<Person> findAllGroupPersons(User user, Long groupId) {
+	public Collection<Person> findAllGroupPersons(Long groupId) {
 		String sql = "SELECT * FROM Person WHERE groupId = ?";
 		
 		persons = jdbcTemplate.query(sql,
 				new Object[] { groupId }, personPropertyRowMapper);
 		return persons;
 	}
+	
+	@Override
+	public Integer countGroupPersons(Long groupId) {
+		Integer personsCount = new Integer(0);
+		String sql = "SELECT count(*) FROM Person WHERE groupId = ?;";
+		Object[] args = { groupId };
+		int[] types = {Types.BIGINT};
+		personsCount = jdbcTemplate.queryForObject(sql, args, types, Integer.class);
+		return personsCount;
+	}
+	
+	@Override
+	public Collection<Person> findLimitGroupPersons(Long groupId, 
+			Integer offset, Integer maxRows) {
+
+		String sql = "SELECT * FROM Person WHERE groupId = ? LIMIT ?,?;";
+		
+		Object[] args = { groupId, offset, maxRows };
+		int[] types = {Types.BIGINT, Types.INTEGER, Types.INTEGER};
+		persons = jdbcTemplate.query(sql, args, types, personPropertyRowMapper);
+		return persons;
+	}
 
 	@Override
-	public Person findPerson(User user, Long id) {
+	public Person findPerson(Long id) {
 		
 		String sql = "SELECT id,firstName,lastName,mail,website,birthday"
 				+ ",password,groupId FROM Person WHERE id = ?";
@@ -107,13 +101,10 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 		person = (Person)queryForObject;
 
 		return person;
-//		return this.jdbcTemplate.que
-//				("SELECT * FROM Person WHERE id ='"+personId+"'",
-//				JdbcDirectoryManager::personMapper);
 	}
 
 	@Override
-	public Group findGroup(User user, Long groupId) {
+	public Group findGroup(Long groupId) {
 		String sql = "SELECT id,name FROM Groupe WHERE id = ?";
 		
 		Object queryForObject = jdbcTemplate.queryForObject(sql,
@@ -122,18 +113,6 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 		group = (Group)queryForObject;
 
 		return group;
-	}
-
-	@Override
-	public boolean login(User user, Long personId, String password) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void logout(User user) {
-		// TODO Auto-generated method stub
-
 	}
 	
 	@Override
@@ -144,7 +123,9 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 				+ ",groupId)"
 				+ " VALUES (:firstName,:lastName,:mail,:website,:birthday"
 				+ ",:password,:groupId)";
-
+		String password = person.getPassword();
+		String hashedPassword = personService.hashPassword(password);
+		person.setPassword(hashedPassword);
 		SqlParameterSource fileParameters = 
 				new BeanPropertySqlParameterSource(person);
 		KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -157,7 +138,7 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 	}
 
 	@Override
-	public int savePerson(User user, Person person) {
+	public int savePerson(Person person) {
 		String sql = "INSERT INTO Person"
 				+ " (id,firstName,lastName,mail,website,birthday,password,groupId)"
 				+ " VALUES (?,?,?,?,?,?,?,?)";
@@ -174,16 +155,29 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 	@Override
 	public int updatePerson(Person person) {
 		String sql = "UPDATE Person "
-				+ "SET id = ?, firstName = ?, lastName = ?, mail = ?, "
+				+ "SET firstName = ?, lastName = ?, mail = ?, "
 				+ "website = ?, birthday = ?, password = ?, groupId = ?"
 				+ " WHERE id = ?;";
+		String password = person.getPassword();
+		String hashedPassword = personService.hashPassword(password);
+		person.setPassword(hashedPassword);
 		int modifiedRows;
-		Object[] args = { person.getId(), person.getFirstName(), person.getLastName(),
+		Object[] args = { person.getFirstName(), person.getLastName(),
 				person.getMail(), person.getWebsite(), person.getBirthday(),
 				person.getPassword(), person.getGroupId(), person.getId() };
-		int[] types = {Types.BIGINT, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR,
+		int[] types = {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR,
 				Types.VARCHAR, Types.DATE, Types.VARCHAR, Types.BIGINT, Types.BIGINT};
 		modifiedRows = jdbcTemplate.update(sql, args, types);
+		return modifiedRows;
+	}
+	
+	public int updateUsernameUserRoles(Person person){
+		String sql = "UPDATE User_roles SET username = ? "
+				+ "WHERE username = ?;";
+		int modifiedRows;
+		Object[] args = { person.getMail(), person.getMail()};
+		int [] argsTypes = {Types.VARCHAR, Types.VARCHAR};
+		modifiedRows = jdbcTemplate.update(sql, args, argsTypes);
 		return modifiedRows;
 	}
 
@@ -193,6 +187,26 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 		String sql = "SELECT * FROM Person";
 		
 		persons = jdbcTemplate.query(sql, personPropertyRowMapper);
+		return persons;
+	}
+	
+	@Override
+	public Integer countPersons() {
+		Integer personsCount = new Integer(0);
+		String sql = "SELECT count(*) FROM Person";
+		
+		personsCount = jdbcTemplate.queryForObject(sql, Integer.class);
+		return personsCount;
+	}
+	
+	@Override
+	public Collection<Person> findLimitPersons(Integer offset, Integer maxRows) {
+
+		String sql = "SELECT * FROM Person LIMIT ?,?;";
+		
+		Object[] args = { offset, maxRows };
+		int[] types = {Types.INTEGER, Types.INTEGER};
+		persons = jdbcTemplate.query(sql, args, types, personPropertyRowMapper);
 		return persons;
 	}
 
@@ -260,18 +274,6 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 
 		return person;
 	}
-	
-//	@Override
-//	public Person getIdByPersonEmail(String personEmail) {
-//		String sql = "SELECT id FROM Person WHERE mail = ?";
-//		
-//		Object queryForObject = jdbcTemplate.queryForObject(sql,
-//				new Object[] { personEmail }, personPropertyRowMapper);
-//		
-//		person = (Person)queryForObject;
-//
-//		return person;
-//	}
 
 	@Override
 	public String getEmailByPersonId(Long personId) {
@@ -298,11 +300,28 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 		}
 		return groupNames;
 	}
-
+	
 	@Override
-	public String getGroupName(Long groupId) {
-		// TODO Auto-generated method stub
-		return null;
+	public Map<Long, String> getLimitGroupNames(Integer offset, Integer maxRows){
+		Map<Long, String> groupNames = new LinkedHashMap<>();
+		
+		String sql = "SELECT id,name FROM Groupe LIMIT ?,?;";
+		Object[] args = { offset, maxRows };
+		int[] types = {Types.INTEGER, Types.INTEGER};
+		groups = jdbcTemplate.query(sql, args, types, groupPropertyRowMapper);
+		for (Group g : groups) {
+			groupNames.put(g.getId(), g.getName());
+		}
+		return groupNames;
+	}
+	
+	@Override
+	public Integer countGroups() {
+		Integer groupsCount = new Integer(0);
+		String sql = "SELECT count(*) FROM Groupe";
+		
+		groupsCount = jdbcTemplate.queryForObject(sql, Integer.class);
+		return groupsCount;
 	}
 
 	@Override
@@ -341,5 +360,60 @@ public class JdbcDirectoryManager implements IDirectoryManager {
 		modifiedRows = jdbcTemplate.update(sql, args, types);
 		return modifiedRows;
 	}
+	
+	@Override
+	public int updatePersonPasswordById(Long personId, String password) {
+		
+		String sql = "UPDATE Person SET password = ? WHERE id = ?;";
+		int modifiedRows;
+		password = personService.hashPassword(password);
+		Object[] args = { password, personId };
+		int[] types = { Types.VARCHAR, Types.BIGINT };
+		modifiedRows = jdbcTemplate.update(sql, args, types);
+		return modifiedRows;
+		
+	}
+	
+	@Override
+	public Collection<Person> findPersonByName(String personName) {
+		
+		personName = "%" + personName + "%";
+		String sql = "SELECT * FROM Person WHERE firstName LIKE ? OR lastName LIKE ?;";
+		Object[] args = { personName, personName };
+		int[] argTypes = { Types.VARCHAR, Types.VARCHAR };
+		persons = jdbcTemplate.query(sql, args, argTypes, personPropertyRowMapper);
+		return persons;
+	}
+	
+	public Collection<Group> findGroupsByName(String groupName) {
+		
+		groupName = "%" + groupName + "%";
+		String sql = "SELECT * FROM Groupe WHERE name LIKE ?;";
+		Object[] args = { groupName};
+		int[] argTypes = { Types.VARCHAR};
+		groups = jdbcTemplate.query(sql, args, argTypes, groupPropertyRowMapper);
+		
+		return groups;
+	}
+	
+	public Collection<Person> findLimitGroupPersonsByGroupName(String groupName	
+			, Long groupId, Integer offset, Integer maxRows){
+		
+		groupName = "%" + groupName + "%";
+		String sql = "SELECT p.id, p.firstName, p.lastName, p.mail, p.website,"
+				+ " p.birthday, p.password, p.groupId, p.enabled "
+				+ "FROM Person p, Groupe g WHERE p.groupId = g.id "
+				+ "AND p.groupId = ? AND g.name LIKE ? LIMIT ?,?;";
+		Object[] args = {groupId, groupName, offset, maxRows};
+		int[] argTypes = {Types.BIGINT, Types.VARCHAR, Types.INTEGER,
+				Types.INTEGER};
+		persons = jdbcTemplate.query(sql, args, argTypes, 
+				personPropertyRowMapper);
+		return persons;
+	}
 
+	@PreDestroy
+	public void close() {
+		logger.info("Close "+this.getClass());
+	}
 }

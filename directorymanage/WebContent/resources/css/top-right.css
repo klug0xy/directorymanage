@@ -1,0 +1,31 @@
+.top-left>.language {
+	position:fixed;
+	top:5px;
+	left:5px;
+	margin:0;
+	padding:5px 3px;
+}
+.top-right-home a {
+	font-size: 20px;
+	position:fixed;
+	top:5px;
+	right:5px;
+	margin:0;
+	padding:5px 3px;
+}
+.top-right-login a {
+	font-size: 20px;
+	position:fixed;
+	top:25px;
+	right:5px;
+	margin:0;
+	padding:5px 3px;
+}
+.top-right-logout a {
+	font-size: 20px;
+	position:fixed;
+	top:45px;
+	right:5px;
+	margin:0;
+	padding:5px 3px;
+}

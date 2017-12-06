@@ -5,7 +5,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import fr.amu.directorymanage.dao.DAOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import fr.amu.directorymanage.beans.Group;
 import fr.amu.directorymanage.beans.Person;
+import fr.amu.directorymanage.exceptions.DAOException;
 import fr.amu.directorymanage.interfaces.PersonDao;
 import fr.amu.directorymanage.jdbc.JdbcTools;
 

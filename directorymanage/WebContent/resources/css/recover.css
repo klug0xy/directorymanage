@@ -1,0 +1,10 @@
+.form-gap {
+    padding-top: 70px;
+}
+.validEmail p{
+	color: #4e9a06; 
+}
+
+.invalidEmail p{
+	color: #cc0000; 
+}

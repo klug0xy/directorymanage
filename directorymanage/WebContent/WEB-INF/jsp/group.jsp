@@ -1,8 +1,5 @@
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<!DOCTYPE html>
-
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
-
+<%@ include file="/WEB-INF/jsp/head-bootstrap.jsp"%>
 <c:url var="findAllGroups" value="/group/actions/findallgroups" />
 <c:url var="findOneGroup" value="/group/actions/findonegroup" />
 <c:url var="removeAllGroups" value="/group/actions/removeallgroups" />
@@ -10,15 +7,25 @@
 <c:url var="groupDetails" value="/group/actions/groupdetails" />
 <c:url var="addGroup" value="/group/actions/addgroup" />
 <c:url var="persons" value="/user" />
-
+<!DOCTYPE html>
 <html>
 <head>
 <title>Directory manage - Groups</title>
-<%@ include file="/WEB-INF/jsp/head-bootstrap.jsp"%>
 </head>
 <body>
-	<a style="position:fixed;top:5px;right:5px;margin:0;padding:5px 3px;"
-	href="<c:url value="/"></c:url>">Home</a>
+	<div class="top-right-home">
+		<a href="<c:url value="/"/>">Home</a>
+	</div>
+	<div class="top-right-login">
+		<sec:authorize access="isAnonymous()">
+			<a href="${ pageContext.request.contextPath}/login">Login</a>
+		</sec:authorize>
+	</div>
+	<div class="top-right-logout">
+		<sec:authorize access="isAuthenticated()">
+			<a href="${ pageContext.request.contextPath}/login?logout">Logout</a>
+		</sec:authorize>
+	</div>
 	<div class="container">
 		<h1>Groups</h1>
 
@@ -30,7 +37,7 @@
 			method="POST" class="form-inline">
 
 			<div class="form-group">
-				<input id="groupId" name="groupId" size="20" class="form-control" />
+				<input id="groupName" name="groupName" size="20" class="form-control" />
 			</div>
 			<input type="hidden" name="${_csrf.parameterName}"
 											value="${_csrf.token}" />
@@ -39,13 +46,14 @@
 					class="form-control btn btn-info" />
 			</div>
 		</form>
+		<sec:authorize access="hasRole('ROLE_ADMIN')">
+			<div class="form-group">
+				<a class="btn btn-success" href="${addGroup}">Add group</a>
+			</div>
+		</sec:authorize>
 		<div class="form-group">
-			<a class="btn btn-success" href="${addGroup}">Add group</a>
-		</div>
-		<div class="form-group">
-			<a class="btn btn-success" href="${persons}">Persons</a>
+			<a class="btn btn-success" href="${persons}">Persons directory</a>
 		</div>
 	</div>
-	<a href="${ pageContext.request.contextPath}/login?logout">Logout</a>
 </body>
 </html>

@@ -1,35 +1,39 @@
-<!DOCTYPE html>
-
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
-
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-
+<%@ include file="/WEB-INF/jsp/head-bootstrap.jsp"%>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Add group</title>
-<%@ include file="/WEB-INF/jsp/head-bootstrap.jsp"%>
 </head>
-
 <body>
 	Language :
 	<a href="?language=en">English</a>|
 	<a href="?language=fr">Français</a>|
 	<a href="?language=ar">Arabe</a>
- 	<a style="position:fixed;top:5px;right:5px;margin:0;padding:5px 3px;"
-	href="<c:url value="/"></c:url>">Home</a>
+	<div class="top-right-home">
+		<a href="<c:url value="/"/>">Home</a>
+	</div>
+	<div class="top-right-login">
+		<sec:authorize access="isAnonymous()">
+			<a href="${ pageContext.request.contextPath}/login">Login</a>
+		</sec:authorize>
+	</div>
+	<div class="top-right-logout">
+		<sec:authorize access="isAuthenticated()">
+			<a href="${ pageContext.request.contextPath}/login?logout">Logout</a>
+		</sec:authorize>
+	</div>
 	<div class="container">
 		<h1>Add group</h1>
 
 		<form:form method="POST" modelAttribute="groupForm">
 
-			<form:errors path="*" cssClass="alert alert-danger" element="div"/>
+			<form:errors path="*" cssClass="alert alert-danger" element="div" />
 
 			<div class="form-group">
-<!-- 				<label for="id">Id :</label> -->
 				<form:input class="form-control" path="id"
-					placeholder="insert group id here" type="hidden" value="1"/>
-				<form:errors path="id" cssClass="alert alert-warning" 
-				element="div" />
+					placeholder="insert group id here" type="hidden" value="1" />
+				<form:errors path="id" cssClass="alert alert-warning" element="div" />
 			</div>
 			<div class="form-group">
 				<label for="name">Name :</label>

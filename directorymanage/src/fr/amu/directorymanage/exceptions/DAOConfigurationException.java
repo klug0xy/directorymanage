@@ -1,4 +1,4 @@
-package fr.amu.directorymanage.dao;
+package fr.amu.directorymanage.exceptions;
 
 public class DAOConfigurationException extends RuntimeException {
 
