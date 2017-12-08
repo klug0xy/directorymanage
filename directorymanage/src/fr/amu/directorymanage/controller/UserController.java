@@ -122,14 +122,14 @@ public class UserController {
 
 	@ModelAttribute("allPersons")
 	public Collection<Person> persons(Long groupId) {
-		return directoryManager.findAllGroupPersons(groupId);
+		return directoryManager.findAllGroupPersonsById(groupId);
 	}
 	
 	 @RequestMapping(value = "/actions/findoneperson", method = 
 			 RequestMethod.POST)
 	 public ModelAndView findOne(@RequestParam Long personId) {
 	 return new ModelAndView("userdetails", "onePerson", 
-			 directoryManager.findPerson(personId));
+			 directoryManager.findPersonById(personId));
 	 }
 	 
 	 @RequestMapping(value = "/actions/findpersons", method = 
@@ -147,7 +147,7 @@ public class UserController {
 			 method = RequestMethod.GET)
 	 public ModelAndView userDetails(@PathVariable("personId") Long personId) {
 	 return new ModelAndView("userdetails", "onePerson", 
-			 directoryManager.findPerson(personId));
+			 directoryManager.findPersonById(personId));
 	 }
 	 
 	 @RequestMapping(value = "/actions/removeallpersons",
@@ -236,7 +236,7 @@ public class UserController {
 		if (personMail != null) personId = person.getId();
 		if (personId == authUserId || personService.hasRole("ROLE_ADMIN")) {
 			model.addObject("person", directoryManager.
-					findPerson(personId));
+					findPersonById(personId));
 			model.setViewName("editperson");
 		}
 		else if (personId != authUserId) {

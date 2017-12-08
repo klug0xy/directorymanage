@@ -14,13 +14,13 @@ public interface IDirectoryManager {
 	Collection<Group> findGroupsByName(String groupName);
 
 	// chercher les personnes d'un groupe
-	Collection<Person> findAllGroupPersons(Long groupId);
+	Collection<Person> findAllGroupPersonsById(Long groupId);
 
 	// chercher tous les personnes de tous les groupes
 	Collection<Person> findAllPersons();
 
 	// chercher une personne
-	Person findPerson(Long personId);
+	Person findPersonById(Long personId);
 
 	Collection<Person> findPersonByName(String personName);
 
@@ -69,10 +69,12 @@ public interface IDirectoryManager {
 
 	public Integer countGroupPersons(Long groupId);
 
-	Collection<Person> findLimitGroupPersons(Long groupId, Integer offset,
+	Collection<Person> findLimitGroupPersonsById(Long groupId, Integer offset,
 			Integer maxRows);
 	
 	Collection<Person> findLimitGroupPersonsByGroupName(String groupName,
 			Long groupId, Integer offset, Integer maxRows);
+	
+	String findUsernameUserRolesByUsername(String personMail);
 
 }
