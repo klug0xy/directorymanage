@@ -1,3 +1,10 @@
+/*
+ * Copyright December 2017 the original author or authors.
+ * 
+ * Project released in an university setting
+ *
+ */
+
 package fr.amu.directorymanage.beans;
 
 import java.sql.Date;
@@ -6,12 +13,18 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import fr.amu.directorymanage.annotations.EmailWithTld;
 import fr.amu.directorymanage.annotations.ExtendedEmailValidator;
+
+/**
+ * 
+ * Classe qui definit le bean Person
+ * 
+ * @author Houssem Mjid
+ * @author Mohamad Abdelnabi
+ *  
+ */
 
 public class Person {
 	

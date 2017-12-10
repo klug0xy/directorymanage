@@ -1,3 +1,10 @@
+/*
+ * Copyright December 2017 the original author or authors.
+ * 
+ * Project released in an university setting
+ *
+ */
+
 package fr.amu.directorymanage.test;
 
 import static org.junit.Assert.*;
@@ -30,7 +37,8 @@ import com.github.springtestdbunit.annotation.ExpectedDatabase;
 
 import fr.amu.directorymanage.beans.Group;
 import fr.amu.directorymanage.beans.Person;
-import fr.amu.directorymanage.business.IDirectoryManager;
+import fr.amu.directorymanage.dao.IDirectoryManager;
+import fr.amu.directorymanage.dao.IDirectoryManagerGroup;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/spring.xml")
@@ -39,11 +47,23 @@ import fr.amu.directorymanage.business.IDirectoryManager;
    TransactionalTestExecutionListener.class,
     DbUnitTestExecutionListener.class })
 
+/**
+ * 
+ * Classe qui teste la classe JdbcDirectoryManagerGroup
+ * 
+ * @author Houssem Mjid
+ * @author Mohamad Abdelnabi
+ *  
+ */
+
 @DbUnitConfiguration(dataSetLoader = ColumnSensingFlatXMLDataSetLoader.class)
 public class JdbcDirectoryManagerGroupTest {
 	
+//	@Autowired
+//	IDirectoryManager directoryManager;
+	
 	@Autowired
-	IDirectoryManager directoryManager;
+	IDirectoryManagerGroup directoryManagerGroup;
 
 	@BeforeClass
 	
@@ -52,6 +72,7 @@ public class JdbcDirectoryManagerGroupTest {
 	}
 
 	@AfterClass
+	@DatabaseTearDown("/directoryManagerDbTest.xml")
 	public static void tearDownAfterClass() throws Exception {
 		
 	}
@@ -74,8 +95,8 @@ public class JdbcDirectoryManagerGroupTest {
 		String expectedGroupName = "M2-GL";
 		String actualGroupName = "";
 		expectedGroup.setName(expectedGroupName);
-		directoryManager.saveGroupAuto(expectedGroup);
-		returnedGroups = directoryManager.findGroupsByName(expectedGroupName);
+		directoryManagerGroup.saveGroupAuto(expectedGroup);
+		returnedGroups = directoryManagerGroup.findGroupsByName(expectedGroupName);
 		for (Group actualGroup : returnedGroups) {
 			actualGroupName = actualGroup.getName();
 		}
@@ -87,14 +108,14 @@ public class JdbcDirectoryManagerGroupTest {
 		Group expectedGroup = new Group();
 		expectedGroup.setName("M2-IF");
 		int expectedInsertedGroupCount = 1;
-		int actualInsertedGroupCount = directoryManager.saveGroupAuto(expectedGroup);
+		int actualInsertedGroupCount = directoryManagerGroup.saveGroupAuto(expectedGroup);
 		assertEquals(expectedInsertedGroupCount, actualInsertedGroupCount);
 	}
 	
 	@Test
 	public void testFindGroupReturnedId() {
 		Long expectedGroupId = new Long(1);
-		Group expectedGroup = directoryManager.findGroup(expectedGroupId);
+		Group expectedGroup = directoryManagerGroup.findGroup(expectedGroupId);
 		Long actualGroupId = expectedGroup.getId();
 		assertEquals(actualGroupId, expectedGroupId);
 	}
@@ -103,7 +124,7 @@ public class JdbcDirectoryManagerGroupTest {
 	public void testFindGroupReturnedName() {
 		Long expectedGroupId = new Long(1);
 		String expectedGroupName = "M2-ISL";
-		Group expectedGroup = directoryManager.findGroup(expectedGroupId);
+		Group expectedGroup = directoryManagerGroup.findGroup(expectedGroupId);
 		String actualGroupName = expectedGroup.getName();
 		assertEquals(expectedGroupName, actualGroupName);
 		
@@ -116,7 +137,7 @@ public class JdbcDirectoryManagerGroupTest {
 		String expectedGroupName = "M2-ISL";
 		int expectedReturnedSize = 1 ;
 		int actualReturnedSize = 0;
-		returnedGroups = directoryManager.findGroupsByName(expectedGroupName);
+		returnedGroups = directoryManagerGroup.findGroupsByName(expectedGroupName);
 		actualReturnedSize = returnedGroups.size();
 		assertEquals(expectedReturnedSize, actualReturnedSize);
 	}
@@ -129,7 +150,7 @@ public class JdbcDirectoryManagerGroupTest {
 		Collection<Group> returnedGroups;
 		String expectedGroupName = "M2-ISL";
 		String actualGroupName = "";
-		returnedGroups = directoryManager.findGroupsByName(expectedGroupName);
+		returnedGroups = directoryManagerGroup.findGroupsByName(expectedGroupName);
 		for (Group group : returnedGroups) {
 			actualGroupName = group.getName();
 		}
@@ -144,7 +165,7 @@ public class JdbcDirectoryManagerGroupTest {
 		Collection<Group> actualGroups;
 		int expectedSize = 1;
 		int actualSize = 0 ;
-		actualGroups = directoryManager.findGroupsByName(expectedGroupsName);
+		actualGroups = directoryManagerGroup.findGroupsByName(expectedGroupsName);
 		actualSize = actualGroups.size();
 		assertEquals(expectedSize, actualSize);
 	}
@@ -157,7 +178,7 @@ public class JdbcDirectoryManagerGroupTest {
 		Collection<Group> actualGroups;
 		int expectedSize = 4;
 		int actualSize = 0 ;
-		actualGroups = directoryManager.findGroupsByName(expectedGroupsName);
+		actualGroups = directoryManagerGroup.findGroupsByName(expectedGroupsName);
 		actualSize = actualGroups.size();
 		assertEquals(expectedSize, actualSize);
 	}
@@ -175,7 +196,7 @@ public class JdbcDirectoryManagerGroupTest {
 		expectedGroup.setId(expectedGroupId);
 		expectedGroup.setName(expectedGroupsName);
 		expectedGroups.add(expectedGroup);
-		actualGroups = directoryManager.findGroupsByName(expectedGroupsName);
+		actualGroups = directoryManagerGroup.findGroupsByName(expectedGroupsName);
 		for (Group actualGroup : actualGroups) {
 			actualGroupsId = actualGroup.getId();
 			actualGroupsName = actualGroup.getName();
@@ -195,7 +216,7 @@ public class JdbcDirectoryManagerGroupTest {
 		Long actualGroupId = new Long(0);
 		String actualGroupName = "";
 		Collection<Group> actualGroups = new ArrayList<Group>();
-		actualGroups = directoryManager.findGroupsByName(searchedName);
+		actualGroups = directoryManagerGroup.findGroupsByName(searchedName);
 		int idx = 0;
 		for (Group actualGroup : actualGroups) {
 			actualGroupId = actualGroup.getId();
@@ -214,7 +235,7 @@ public class JdbcDirectoryManagerGroupTest {
 		String searchedName = "";
 		String actualGroupName = "";
 		Collection<Group> actualGroups = new ArrayList<Group>();
-		actualGroups = directoryManager.findGroupsByName(searchedName);
+		actualGroups = directoryManagerGroup.findGroupsByName(searchedName);
 		int idx = 0;
 		for (Group actualGroup : actualGroups) {
 			actualGroupName = actualGroup.getName();
@@ -229,7 +250,7 @@ public class JdbcDirectoryManagerGroupTest {
 		int expectedSize = 0;
 		String searchedName = "*";
 		Collection<Group> actualGroups = new ArrayList<Group>();
-		actualGroups = directoryManager.findGroupsByName(searchedName);
+		actualGroups = directoryManagerGroup.findGroupsByName(searchedName);
 		int actuaulSize = actualGroups.size();
 		assertEquals(expectedSize, actuaulSize);
 	}
@@ -242,7 +263,7 @@ public class JdbcDirectoryManagerGroupTest {
 		Integer expectedReturnedRows = 10;
 		int offset = 10;
 		int maxRows = 10;
-		groupNames = directoryManager.getLimitGroupNames(offset, maxRows);
+		groupNames = directoryManagerGroup.getLimitGroupNames(offset, maxRows);
 		Integer actualReturnedRows = groupNames.size();
 		assertEquals(expectedReturnedRows, actualReturnedRows);
 	}
@@ -255,7 +276,7 @@ public class JdbcDirectoryManagerGroupTest {
 		expectedGroupNames.put(new Long(2), "M2-FSI");
 		expectedGroupNames.put(new Long(3), "M2-ID");
 		expectedGroupNames.put(new Long(4), "M2-SIR");
-		actualGroupNames = directoryManager.getGroupNames();
+		actualGroupNames = directoryManagerGroup.getGroupNames();
 		//assertTrue(actualGroupNames.equals(expectedGroupNames));
 		Long key = new Long(1);
 		for (Map.Entry<Long, String> actualGroup : actualGroupNames.entrySet()){
@@ -268,7 +289,7 @@ public class JdbcDirectoryManagerGroupTest {
 	public void testCountGroups(){
 		Integer expectedGroupCounts = 4;
 		Integer actualGroupCounts = 0;
-		actualGroupCounts = directoryManager.countGroups();
+		actualGroupCounts = directoryManagerGroup.countGroups();
 		assertEquals(expectedGroupCounts, actualGroupCounts);
 	}
 	
@@ -282,7 +303,7 @@ public class JdbcDirectoryManagerGroupTest {
 		changedGroup.setName(changedValue);
 		int expectedChangedRows = 1;
 		int actualChangedRows = 0;
-		actualChangedRows = directoryManager.updateGroup(changedGroup);
+		actualChangedRows = directoryManagerGroup.updateGroup(changedGroup);
 		assertEquals(expectedChangedRows, actualChangedRows);
 	}
 		
@@ -295,8 +316,8 @@ public class JdbcDirectoryManagerGroupTest {
 		Collection<Group> actualGroups;
 		changedGroup.setId(groupId);
 		changedGroup.setName(changedGroupName);
-		directoryManager.updateGroup(changedGroup);
-		actualGroups = directoryManager.findGroupsByName(changedGroupName);
+		directoryManagerGroup.updateGroup(changedGroup);
+		actualGroups = directoryManagerGroup.findGroupsByName(changedGroupName);
 		for (Group actualGroup : actualGroups){
 			String actualGroupName = actualGroup.getName();
 			assertEquals(changedGroupName, actualGroupName);

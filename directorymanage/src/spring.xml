@@ -19,6 +19,18 @@
 		<property name="username" value="mjid" />
 		<property name="password" value="hmac2017." />
 	</bean>
-    
-    
+	<bean id="dbUnitDataTypeFactory" class="org.dbunit.ext.mysql.MySqlDataTypeFactory"/>
+	<bean id="dbUnitMetadataHandler" class="org.dbunit.ext.mysql.MySqlMetadataHandler"/>
+	<bean id="dbUnitDatabaseConfig" class="com.github.springtestdbunit.bean.DatabaseConfigBean">
+    	<property name="skipOracleRecyclebinTables" value="true"/>
+    	<property name="datatypeFactory" ref="dbUnitDataTypeFactory"/>
+    	<property name="metadataHandler" ref="dbUnitMetadataHandler"/>
+    	<property name="caseSensitiveTableNames" value="true"/>
+	</bean>
+    <bean id="dbUnitDatabaseConnection" class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
+    	<constructor-arg ref="dataSource" />
+    	<property name="databaseConfig" ref="dbUnitDatabaseConfig"/>
+    	<property name="schema" value="directorymanageDBTest"/>
+    	
+	</bean>
 </beans>

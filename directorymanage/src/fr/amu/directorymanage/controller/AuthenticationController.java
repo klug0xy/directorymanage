@@ -1,8 +1,12 @@
+/*
+ * Copyright December 2017 the original author or authors.
+ * 
+ * Project released in an university setting
+ *
+ */
+
 package fr.amu.directorymanage.controller;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
@@ -18,10 +22,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,17 +31,29 @@ import org.springframework.web.servlet.ModelAndView;
 
 import fr.amu.directorymanage.beans.PasswordResetToken;
 import fr.amu.directorymanage.beans.Person;
-import fr.amu.directorymanage.business.IDirectoryManager;
 import fr.amu.directorymanage.business.MailService;
+import fr.amu.directorymanage.dao.IDirectoryManagerPerson;
 import fr.amu.directorymanage.dao.PasswordResetTokenRepository;
-import fr.amu.directorymanage.exceptions.PersonNotFoundException;
+
+/**
+ * 
+ * Classe controller pour les mecanismes de l'authentification
+ * et recuperation de mot de passe et la page d'accueil
+ * 
+ * @author Houssem Mjid
+ * @author Mohamad Abdelnabi
+ *  
+ */
 
 @Controller()
 @RequestMapping("")
 public class AuthenticationController {
 	
+//	@Autowired
+//	IDirectoryManager directoryManager;
 	@Autowired
-	IDirectoryManager directoryManager;
+	IDirectoryManagerPerson directoryManagerPerson;
+	
 	@Autowired
 	private MailService mailService;
 	@Autowired
@@ -49,6 +63,10 @@ public class AuthenticationController {
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 
+	/**
+	 * la methode qui fait le mapping vers la page d'accueil
+	 * @return objet de type ModelAndView, qui contient la page index
+	 */
 	@RequestMapping(value = {"/" }, method = RequestMethod.GET)
 	public ModelAndView defaultPage() {
 
@@ -69,6 +87,11 @@ public class AuthenticationController {
 
 	}
 
+	/**
+	 * la methode qui fait le mapping vers la page admin
+	 * NOTE: not implemented yet!
+	 * @return objet de type ModelAndView, qui contient la page admin
+	 */
 	@RequestMapping(value = "/admin**", method = RequestMethod.GET)
 	public ModelAndView adminPage() {
 
@@ -81,6 +104,17 @@ public class AuthenticationController {
 
 	}
 
+	/**
+	 * la methode qui fait le mapping vers la page login
+	 * @param error chaine de caractere a recevoir si une erreur est produite
+	 * qui sert a renvoyer un message d'erreur a la vue
+	 * @param logout chaine de caractere a recevoir si la personne
+	 * s'est deconnecte qui sert a deconnecter la personne
+	 * @param request HttpServletRequest pour decrire la requete http
+	 * @param response HttpServletResponse pour decrire la reponse http
+	 * @return objet de type ModelAndView, qui contient la page login avec 
+	 * comme parametre soit logout soit error
+	 */
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ModelAndView loginPage(@RequestParam(value = "error",
 	required = false) String error,
@@ -118,6 +152,11 @@ public class AuthenticationController {
 		return model;
 	}
 	
+	/**
+	 * la methode qui fait le mapping vers la page recover
+	 * qui sert a la recuperation du mot de passe reponse a la methode GET http 
+	 * @return objet de type ModelAndView, qui contient la page recover 
+	 */
 	@RequestMapping(value = "/recover", method = RequestMethod.GET)
 	public ModelAndView recoverPage() {
 		ModelAndView model = new ModelAndView();
@@ -126,14 +165,27 @@ public class AuthenticationController {
 		
 	}
 	
+	/**
+	 * la methode qui fait le mapping vers la page recover
+	 * repondant a la methode POST http, recupere le mail tape par la personne
+	 * recupere la personne de la base de donnees via son email,genere le token
+	 * cree l'objet PasswordResetToken correspondant,
+	 * stocke ce dernier dans la base de donnees,
+	 * appel le service mail pour l'envoi du mail de recuperation
+	 * renvoi un message de succes a la vue si tout est bien passe
+	 * ou un message d'echec si le mail n'est pas reconnu 
+	 * @param personEmail chaine de caractere contenant le mail  
+	 * @return objet de type ModelAndView, qui contient la page recover
+	 */
 	@RequestMapping(value="/recover" , method=RequestMethod.POST)
-	public ModelAndView resetRequest(@RequestParam(value="email") String personEmail)
+	public ModelAndView resetRequest(@RequestParam(value="email") 
+		String personEmail)
 	{
 		ModelAndView model = new ModelAndView();
 		//check if the email id is valid and registered with us.
 		try {
 			
-			Person person = directoryManager.getPersonByEmail(personEmail);
+			Person person = directoryManagerPerson.getPersonByEmail(personEmail);
 			if (person != null) {
 				//Generate a token
 				String token = UUID.randomUUID().toString();
@@ -160,6 +212,16 @@ public class AuthenticationController {
 		
 	}
 	
+	/**
+	 * la methode qui fait le mapping vers la page newpassword
+	 * reponse a la methode GET http, verifie si le token est correct
+	 * et si il est pas expire, si tout est ok, la personne aura acces
+	 * aux formulaire de reinitialisation de mot de passe ou une redirection
+	 * a une page d'erreur est faite sinon
+	 * @param personId Long indiquant l'identifiant de la personne 
+	 * @param token String contenant le token de la personne
+	 * @return objet de type ModelAndView, qui contient la page recover
+	 */
 	@RequestMapping(value = "/newpassword", method = RequestMethod.GET)
 	public ModelAndView newPassword(@RequestParam(value = "personId")
 		Long personId , @RequestParam(value = "token") String token){
@@ -191,6 +253,17 @@ public class AuthenticationController {
 		
 	}
 	
+	/**
+	 * la methode qui fait le mapping vers la page newpassword
+	 * reponse a la methode POST http, verifie si les deux mot de passe
+	 * tape par la personne sont bien identiques si c'est bon, le mot de passe
+	 * est mis a jour dans la base et un lien de login est renvoye,
+	 *  un message d'erreur est renvoye sinon
+	 * @param password1 le premier mot de passe tape
+	 * @param password2 le deuxieme mot de passe tape
+	 * @param personId Long identifiant de la personne
+	 * @return objet de type ModelAndView, qui contient la page newpassord
+	 */
 	@RequestMapping(value = "/newpassword", method = RequestMethod.POST)
 	public ModelAndView newPasswordPost(@RequestParam(value = "password1")
 		String password1, @RequestParam(value = "password2") String password2,
@@ -200,7 +273,7 @@ public class AuthenticationController {
 		
 		if (password1.equals(password2) && !(password1.isEmpty()) && 
 				!(password2.isEmpty()) && personId != null) {
-			directoryManager.updatePersonPasswordById(personId, password1);
+			directoryManagerPerson.updatePersonPasswordById(personId, password1);
 			model.addObject("successChangePassMsg", 
 					"Your password updated succesfully, try to login <a href='/directorymanage/login'>Here</a>");
 			model.setViewName("newpassword");
@@ -212,14 +285,20 @@ public class AuthenticationController {
 		return model;
 		
 	}
-
-	// for 403 access denied page
+	
+	/**
+	 * la methode qui fait le mapping vers la page 403,
+	 * reponse a la methode GET http, les demandes sont renvoye vers cette page
+	 * si un acces a un contenu interdit par une personne est survenu
+	 * verifie si la personne est authentifie et il n'est pas anonymous pour
+	 * afficher son nom d'utilisateur (son mail), si c'est pas le cas la page
+	 * est renvoye normalement
+	 * @return objet de type ModelAndView, qui contient la page 403
+	 */
 	@RequestMapping(value = "/errors/403", method = RequestMethod.GET)
 	public ModelAndView accesssDenied() {
 
 		ModelAndView model = new ModelAndView();
-
-		// check if user is login
 		Authentication auth = SecurityContextHolder.getContext().
 				getAuthentication();
 		if (!(auth instanceof AnonymousAuthenticationToken) && auth.

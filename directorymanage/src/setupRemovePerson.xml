@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--<!DOCTYPE dataset SYSTEM "/home/mjid/git/LocalDirectoryManage/directorymanage/src/directoryManagerDbTest.dtd">!-->
+<dataset xsi:schemaLocation="directoryManagerDbTest.xsd">
+<Groupe id="1" name="M2-ISL"/>
+<Groupe id="2" name="M2-FSI"/>
+  <Person id="1" firstName="Houssem" lastName="Mjid" mail="mjidhoussem@gmail.com" website="www.jdid.fr" birthday="1993-07-30" password="$2a$10$W9oRWeFmOT0bByL5fmAceucetmEYFg2yzq3e50mcu.CO7rUDb/poG" groupId="1" enabled="1"/>
+  <Person id="2" firstName="Hichem" lastName="Bouhlel" mail="madridinho123@gmail.com" website="www.bouhlel.tk" birthday="1993-06-26" password="$2a$10$neO/1E39cKzp4D5komsCbuqNlDtC3nsEu4qHy5P0oB7Ktj6qdUvpG" groupId="1" enabled="1"/>
+ <Person id="3" firstName="Adem" lastName="Bekouche" mail="hous12256@hotmail.fr" website="www.jdid.fr" birthday="1993-01-01" password="$2a$10$.YaJK/0CV.ouXe4VFo.UNuQqMn8FgkLnfjmaN1I6SUpi4UQNR7iDa" groupId="1" enabled="1"/>
+<Person id="4" firstName="Oumaima" lastName="Nammassi" mail="namassi@gmail.fr" website="www.google.fr" birthday="1993-06-23" password="$2a$10$H8TN7LEs2U1MmhHUfUMfV.ttRCiEtXG/4KU/cNnV3rsMJLyOxDuau" groupId="2" enabled="1"/>
+<Person id="5" firstName="Philip" lastName="Risch" mail="risch@value.fr" website="www.risch.fr" birthday="1993-09-30" password="$2a$10$H8TN7LEs2U1MmhHUfUMfV.ttRCiEtXG/4KU/cNnV3rsMJLyOxDuau" groupId="2" enabled="1"/>
+<PersonsTokens id="2" personId="1" token="d6365f3a-8fa6-473c-8049-dad4b63cf131" expiryDate="2017-12-03"/>
+<User_roles username="hous12256@hotmail.fr" role="ROLE_USER"/>
+</dataset>

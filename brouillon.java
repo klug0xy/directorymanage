@@ -55,3 +55,46 @@ static private Person personMapper(ResultSet resultSet, int rank) throws SQLExce
 					</div>
 				</form>
 
+
+@Test
+	public void testFindAllGroupPersonsById(){
+		
+	}
+	
+	@Test
+	public void testfindLimitGroupPersonsByIdSize(){
+		
+		Collection<Person> limitGroupPersons;
+		Integer offset = 0;
+		Integer maxRows = 10; 
+		Long searchedGroupId = new Long(2);
+		Integer expectedSize = 1;
+		limitGroupPersons = directoryManager.findLimitGroupPersonsById
+				(searchedGroupId, offset, maxRows);
+		Integer actualSize = limitGroupPersons.size();
+		assertEquals(expectedSize, actualSize);
+	}
+	
+	@Test
+	public void testfindLimitGroupPersonsById(){
+		
+		Collection<Person> limitGroupPersons;
+		Integer offset = 0;
+		Integer maxRows = 10; 
+		Long searchedGroupId = new Long(2);
+		Integer expectedSize = 1;
+		String expectedFirstName = "Oumaima";
+		String expectedLastName = "Nammassi";
+		limitGroupPersons = directoryManager.findLimitGroupPersonsById
+				(searchedGroupId, offset, maxRows);
+		int actualSize = limitGroupPersons.size();
+		assertEquals(expectedSize, actualSize);
+		for (Person actualPerson : limitGroupPersons){
+			String actualFirstName = actualPerson.getFirstName();
+			String actualLastName = actualPerson.getLastName();
+			assertEquals(expectedFirstName, actualFirstName);
+			assertEquals(expectedLastName, actualLastName);
+		}
+	}
+	
+

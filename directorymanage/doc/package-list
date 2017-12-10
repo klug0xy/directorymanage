@@ -1,0 +1,9 @@
+fr.amu.directorymanage.annotations
+fr.amu.directorymanage.beans
+fr.amu.directorymanage.business
+fr.amu.directorymanage.controller
+fr.amu.directorymanage.dao
+fr.amu.directorymanage.exceptions
+fr.amu.directorymanage.taglib
+fr.amu.directorymanage.test
+fr.amu.directorymanage.test.controller

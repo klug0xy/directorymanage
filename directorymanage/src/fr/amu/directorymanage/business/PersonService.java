@@ -1,3 +1,10 @@
+/*
+ * Copyright December 2017 the original author or authors.
+ * 
+ * Project released in an university setting
+ *
+ */
+
 package fr.amu.directorymanage.business;
 
 import java.util.Collection;
@@ -10,8 +17,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import fr.amu.directorymanage.beans.PasswordResetToken;
-import fr.amu.directorymanage.beans.Person;
 import fr.amu.directorymanage.dao.PasswordResetTokenRepository;
+
+/**
+ * 
+ * Classe qui implemente l'interface IPersonService
+ * 
+ * @author Houssem Mjid
+ * @author Mohamad Abdelnabi
+ *  
+ */
 
 @Service
 @Qualifier
@@ -26,12 +41,6 @@ public class PersonService implements IPersonService {
 		final PasswordResetToken myToken = new PasswordResetToken(token, personId);
         passwordTokenRepository.save(myToken);
 
-	}
-
-	@Override
-	public Person findPersonByEmail(String email) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 	@Override

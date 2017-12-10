@@ -1,3 +1,10 @@
+/*
+ * Copyright December 2017 the original author or authors.
+ * 
+ * Project released in an university setting
+ *
+ */
+
 package fr.amu.directorymanage.business;
 
 import java.util.Properties;
@@ -16,6 +23,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
+/**
+ * 
+ * Classe qui implemente l'interface MailService pour SMTP GMAIL
+ * 
+ * @author Houssem Mjid
+ * @author Mohamad Abdelnabi
+ *  
+ */
 
 @Service
 public class MailServiceImpl implements MailService {

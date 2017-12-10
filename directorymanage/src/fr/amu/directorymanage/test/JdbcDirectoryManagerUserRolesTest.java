@@ -1,3 +1,10 @@
+/*
+ * Copyright December 2017 the original author or authors.
+ * 
+ * Project released in an university setting
+ *
+ */
+
 package fr.amu.directorymanage.test;
 
 import static org.junit.Assert.*;
@@ -12,7 +19,16 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.amu.directorymanage.beans.Person;
-import fr.amu.directorymanage.business.IDirectoryManager;
+import fr.amu.directorymanage.dao.IDirectoryManager;
+
+/**
+ * 
+ * Classe qui teste la classe JdbcDirectoryManagerUserRoles
+ * 
+ * @author Houssem Mjid
+ * @author Mohamad Abdelnabi
+ *  
+ */
 
 public class JdbcDirectoryManagerUserRolesTest {
 	

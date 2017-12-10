@@ -1,3 +1,10 @@
+/*
+ * Copyright December 2017 the original author or authors.
+ * 
+ * Project released in an university setting
+ *
+ */
+
 package fr.amu.directorymanage.taglib;
 
 import java.io.Writer;
@@ -5,6 +12,16 @@ import java.io.Writer;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
+
+/**
+ * 
+ * Classe controller pour l'annuaire des groupes
+ * recupere tous les chemin sous /user
+ * 
+ * @author Houssem Mjid
+ * @author Mohamad Abdelnabi
+ *  
+ */
 
 public class PaginationTaglib extends SimpleTagSupport {
 

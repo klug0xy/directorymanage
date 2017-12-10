@@ -1,10 +1,27 @@
+/*
+ * Copyright December 2017 the original author or authors.
+ * 
+ * Project released in an university setting
+ *
+ */
+
 package fr.amu.directorymanage.beans;
 
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * 
+ * Classe qui definit le bean PasswordResetToken 
+ * 
+ * @author Houssem Mjid
+ * @author Mohamad Abdelnabi
+ *  
+ */
+
 public class PasswordResetToken {
 	
+	// le token expire au bout de 24h
 	private static final int EXPIRATION = 60 * 24;
 	
 	private Long id;

@@ -1,5 +1,11 @@
-package fr.amu.directorymanage.dao;
+/*
+ * Copyright December 2017 the original author or authors.
+ * 
+ * Project released in an university setting
+ *
+ */
 
+package fr.amu.directorymanage.dao;
 
 import java.util.Date;
 import java.util.stream.Stream;
@@ -22,6 +28,15 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
 import fr.amu.directorymanage.beans.PasswordResetToken;
+
+/**
+ * 
+ * Classe qui implemente les methodes de l'interface 
+ * PasswordResetTokenRepository pour JDBC
+ * @author Houssem Mjid
+ * @author Mohamad Abdelnabi
+ *  
+ */
 
 @Service
 public class PasswordResetTokenImpl implements PasswordResetTokenRepository {
@@ -73,19 +88,21 @@ public class PasswordResetTokenImpl implements PasswordResetTokenRepository {
 	@Override
 	public Stream<PasswordResetToken> findAllByExpiryDateLessThan(Date now) {
 		// TODO Auto-generated method stub
+		// not implemented yet! 
 		return null;
 	}
 
 	@Override
 	public void deleteByExpiryDateLessThan(Date now) {
 		// TODO Auto-generated method stub
+		// not implemented yet! 
 
 	}
 
 	@Override
 	public void deleteAllExpiredSince(Date now) {
 		// TODO Auto-generated method stub
-
+		// not implemented yet! 
 	}
 
 	@Override

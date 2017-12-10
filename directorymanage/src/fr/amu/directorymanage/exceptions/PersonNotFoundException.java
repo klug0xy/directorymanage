@@ -1,4 +1,20 @@
+/*
+ * Copyright December 2017 the original author or authors.
+ * 
+ * Project released in an university setting
+ *
+ */
+
 package fr.amu.directorymanage.exceptions;
+
+/**
+ * 
+ * Classe qui intercepte les exceptions si une personne n'est pas trouvee
+ * 
+ * @author Houssem Mjid
+ * @author Mohamad Abdelnabi
+ *  
+ */
 
 public class PersonNotFoundException extends RuntimeException {
 	

@@ -1,3 +1,10 @@
+/*
+ * Copyright December 2017 the original author or authors.
+ * 
+ * Project released in an university setting
+ *
+ */
+
 package fr.amu.directorymanage.annotations;
 
 import java.lang.annotation.Documented;
@@ -10,6 +17,15 @@ import javax.validation.Payload;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Email;
+
+/**
+ * 
+ * Annotation pour ajouter des contraintes sur la saisie d'un email
+ * 
+ * @author Houssem Mjid
+ * @author Mohamad Abdelnabi
+ *  
+ */
 
 @Email(message="Please provide a valid email address")
 @Pattern(regexp=".+@.+\\..+", message="Please provide a valid email address")
